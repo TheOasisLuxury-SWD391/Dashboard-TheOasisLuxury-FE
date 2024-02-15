@@ -26,14 +26,8 @@ import {
 import "./Table.css";
 import EditProjectDialog from "../Popup/EditProject";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-
 import { useState, useEffect } from "react";
 import CreateProjectDialog from "../Popup/CreateProject";
-// import { ObjectId } from "mongodb"; 
-
-function createProjectData(_id, project_name, start_date, end_date, status, description, Projects, Project_id) {
-  return { _id, project_name, start_date, end_date, status, description, Projects, Project_id };
-}
 
 
 export default function ProjectTable() {
@@ -51,9 +45,7 @@ export default function ProjectTable() {
 
 
   useEffect(() => {
-    // Fetch projects on component mount
     fetchProjects();
-    // handleSaveEdit();
   }, []);
 
   const fetchProjects = async () => {
@@ -98,51 +90,23 @@ export default function ProjectTable() {
     }
   };
 
-  // const handleSaveEdit = async () => {
-  //   if (!editProject) {
-  //     debugger;
-  //     console.error("No project selected for update");
-  //     return;
-  //   }else{
-  //     try {
-  //       const token = localStorage.getItem('token');
-  //       const response = await fetch(`http://localhost:5000/api/v1/projects/${editProject._id}`, {
-  //         method: 'PATCH',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${token}`, 
-  //         },
-  //         body: JSON.stringify(editProject),
-  //       });
 
-  //     console.log('response',response);
-
-  //       if (response.ok) {
-  //         fetchProjects();
-  //         console.log("Project updated successfully");
-  //       } else {
-  //         console.error("Failed to update project");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error updating project:", error);
-  //     }
-  //   }
-
-
-  //   handleCloseEditDialog();
-  // };
-  
   const handleUpdate = async () => {
     console.log('editProject', editProject);
     try {
       const token = localStorage.getItem('token');
+      // Tạo một bản sao của editProject và xóa trường '_id' => Tránh bị thay đổi _id vì trong môngDB ko cho phép thay đổi _id
+      const projectData = { ...editProject };
+      delete projectData._id;
+      debugger;
+
       const response = await fetch(`http://localhost:5000/api/v1/projects/${editProject._id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(editProject._id),
+        body: JSON.stringify(projectData),
       });
       if (response.ok) {
         // Update the projects list after deletion
@@ -156,7 +120,6 @@ export default function ProjectTable() {
     }
     handleCloseEditDialog();
   };
-
 
   const handleOpenEditDialog = (project) => {
     setEditProject(project);
@@ -177,13 +140,6 @@ export default function ProjectTable() {
     setOpenDialog(false);
   };
 
-  const handleInputChange = (event, prop) => {
-    setNewProject({
-      ...newProject,
-      [prop]: event.target.value
-    });
-  };
-
   const handleClickOpen = () => {
     setOpenDialog(true);
   };
@@ -200,7 +156,7 @@ export default function ProjectTable() {
         },
         body: JSON.stringify(newProject), // Send the new project data
       });
-  
+
       if (response.ok) {
         const addedProject = await response.json();
         setProjects([...projects, addedProject]); // Update the state
@@ -217,40 +173,19 @@ export default function ProjectTable() {
   return (
     <Container maxWidth="md" sx={{ mt: 8, mb: 8 }}>
       <h3>Project List</h3>
-
-      <CreateProjectDialog
-      open={openDialog}
-      handleClose={() => setOpenDialog(false)}
-      handleProjectAdd={handleAdd}
-    />
-
       <Box display="flex" justifyContent="flex-end" mb={2}>
-        {/* <TextField
-          id="search-field"
-          label="Search"
-          type="search"
-          variant="outlined"
-          size="small"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          sx={{ mr: 4 }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        /> */}
         <Tooltip title="Add New Subdivision">
           <IconButton color="primary" onClick={handleClickOpen}>
             <AddCircleOutlineIcon />
           </IconButton>
         </Tooltip>
       </Box>
-
+      {/* Dialog Tạo mới dự án */}
+      <CreateProjectDialog
+        open={openDialog}
+        handleClose={() => setOpenDialog(false)}
+        handleProjectAdd={handleAdd}
+      />
       {/* Dialog chỉnh sửa dự án */}
       <EditProjectDialog
         editProject={editProject}
@@ -259,8 +194,7 @@ export default function ProjectTable() {
         handleCloseEditDialog={handleCloseEditDialog}
         handleUpdate={handleUpdate}
       />
-
-
+      {/* Table Projects list */}
       <div style={{ padding: '12px', width: '100%' }}>
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
           <TableContainer>
