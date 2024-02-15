@@ -188,20 +188,10 @@ export default function SubdivisionTable() {
               onChange={handleInputChange}
               label="Status"
             >
-              <MenuItem value="Active">Active</MenuItem>
-              <MenuItem value="Inactive">Inactive</MenuItem>
+              <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+              <MenuItem value="INACTIVE">INACTIVE</MenuItem>
             </Select>
           </FormControl>
-
-          <TextField
-            margin="dense"
-            id="projectId"
-            label="Project ID"
-            type="text"
-            fullWidth
-            value={newSubdivision.projectId}
-            onChange={handleChange('projectId')}
-          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -308,8 +298,8 @@ export default function SubdivisionTable() {
                           size="small"
                           displayEmpty
                         >
-                          <MenuItem value="Active">Active</MenuItem>
-                          <MenuItem value="Inactive">Inactive</MenuItem>
+                          <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+                          <MenuItem value="INACTIVE">INACTIVE</MenuItem>
                         </Select>
                       </TableCell>
                       <TableCell>
