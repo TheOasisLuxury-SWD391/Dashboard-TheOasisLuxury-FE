@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainDash from './components/MainDash/MainDash';
 import RightSide from './components/RigtSide/RightSide';
 import Sidebar from './components/Sidebar';
+import '../src/style/index.css';
+
 // Giả sử bạn đã tạo các trang này
 // import DashboardPage from './pages/DashboardPage';
 
@@ -26,8 +28,8 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <div className="AppGlass">
         {isLoggedIn ? (
+          <div className="AppGlass">
             <>
               <Sidebar />
               <Routes>
@@ -40,10 +42,12 @@ function App() {
               </Routes>
               <RightSide />
             </>
-          ) : (
+          </div>
+        ) : (
+          <div>
             <AuthComponent setIsLoggedIn={setIsLoggedIn} />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </Router>
   );

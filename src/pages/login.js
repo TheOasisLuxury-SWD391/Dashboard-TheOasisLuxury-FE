@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { TextField, Button, Container, Box, Typography, Checkbox, FormControlLabel, IconButton, InputAdornment } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const AuthComponent = (props) => {
   const [loginData, setLoginData] = useState({ user_name: '', password: '' });
@@ -11,8 +14,29 @@ const AuthComponent = (props) => {
     password: '',
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
-  
+  useEffect(() => {
+    // Load credentials from local storage on component mount
+    const savedUserName = localStorage.getItem('savedUserName');
+    const savedPassword = localStorage.getItem('savedPassword');
+    if (savedUserName && savedPassword) {
+      setLoginData({ user_name: savedUserName, password: savedPassword });
+      setRememberMe(true);
+    }
+  }, []);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    console.log("Toggling password visibility:", !showPassword); // Debugging
+  };
+
+  const handleRememberMeChange = (event) => {
+    setRememberMe(event.target.checked);
+    console.log("Remember Me state:", event.target.checked); // Debugging
+  };
+
 
   const handleLogin = async () => {
     try {
@@ -23,7 +47,7 @@ const AuthComponent = (props) => {
         },
         body: JSON.stringify(loginData),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         // Set token in local storage or state
@@ -31,7 +55,16 @@ const AuthComponent = (props) => {
         const accessToken = data.result.access_token; // Trích xuất access_token
         localStorage.setItem('token', accessToken); // Lưu token vào localStorage
         console.log('Login successful');
-        
+        if (rememberMe) {
+          // Save credentials to local storage
+          localStorage.setItem('savedUserName', loginData.user_name);
+          localStorage.setItem('savedPassword', loginData.password);
+        } else {
+          // Clear saved credentials if "Remember Me" is not checked
+          localStorage.removeItem('savedUserName');
+          localStorage.removeItem('savedPassword');
+        }
+
       } else {
         console.error('Login failed');
       }
@@ -39,7 +72,7 @@ const AuthComponent = (props) => {
       console.error('Error during login:', error);
     }
   };
-  
+
   const handleRegister = async () => {
     try {
       const response = await fetch('http://localhost:5000/register', {
@@ -64,29 +97,64 @@ const AuthComponent = (props) => {
   };
 
   return (
-    <div>
-      
-        <div>
-          <h2>Login</h2>
-          <input
-            type="userName"
-            placeholder="User Name"
+    <Container className="flex items-center justify-center min-h-screen">
+      <Box className="bg-white p-8 shadow-lg" sx={{ maxWidth: 400 }}>
+        <Typography variant="h5" className="font-bold text-center mb-4">Đăng nhập</Typography>
+        <form>
+          <TextField
+            fullWidth
+            id="username"
+            label="Tên đăng nhập"
+            margin="normal"
+            variant="outlined"
             value={loginData.user_name}
             onChange={(e) => setLoginData({ ...loginData, user_name: e.target.value })}
           />
-          <input
-            type="password"
-            placeholder="Password"
+          <TextField
+            fullWidth
+            id="password"
+            label="Mật khẩu"
+            type={showPassword ? 'text' : 'password'}
+            margin="normal"
+            variant="outlined"
             value={loginData.password}
             onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={togglePasswordVisibility}
+                    aria-label="toggle password visibility"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          <button onClick={handleLogin}>Login</button>
 
-          <h2>Register</h2>
-          {/* Add input fields for registration data */}
-          <button onClick={handleRegister}>Register</button>
-        </div>
-    </div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={handleRememberMeChange}
+                color="primary"
+              />
+            }
+            label="Nhớ mật khẩu"
+          />
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            className="mt-4"
+            onClick={handleLogin}
+          >
+            Đăng nhập
+          </Button>
+        </form>
+      </Box>
+    </Container>
   );
 };
 
