@@ -21,16 +21,36 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Box
+  Box,
+  Typography
 } from "@mui/material";
 import "./Table.css";
 import EditProjectDialog from "../Popup/EditProject";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useState, useEffect } from "react";
 import CreateProjectDialog from "../Popup/CreateProject";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import "./Table.css"
 
 
 export default function ProjectTable() {
+
+  const makeStyle = (status) => {
+    if (status === 'ACTIVE') {
+      return {
+        background: 'rgb(145 254 159 / 47%)',
+        color: 'green',
+      }
+    }
+    else if (status === 'INACTIVE') {
+      return {
+        background: '#ffadad8f',
+        color: 'red',
+      }
+    }
+  }
+
   const [projects, setProjects] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [newProject, setNewProject] = useState({
@@ -171,10 +191,11 @@ export default function ProjectTable() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 8, mb: 8 }}>
-      <h3>Project List</h3>
+    <Container maxWidth="md" className="">
+      {/* <h3>Project List</h3> */}
+      <Typography variant="h6">Project List</Typography>
       <Box display="flex" justifyContent="flex-end" mb={2}>
-        <Tooltip title="Add New Subdivision">
+        <Tooltip title="Add New Project">
           <IconButton color="primary" onClick={handleClickOpen}>
             <AddCircleOutlineIcon />
           </IconButton>
@@ -203,12 +224,12 @@ export default function ProjectTable() {
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell align="left">Project Name</TableCell>
-                  <TableCell align="left">Start Date</TableCell>
-                  <TableCell align="left">End Date</TableCell>
+                  <TableCell align="left" className="whitespace-nowrap">Start Date</TableCell>
+                  <TableCell align="left" className="whitespace-nowrap">End Date</TableCell>
                   <TableCell align="left">Description</TableCell>
                   {/* <TableCell align="left">Projects</TableCell> */}
-                  <TableCell align="left">Status</TableCell>
-                  <TableCell align="left">Actions</TableCell>
+                  <TableCell align="center">Status</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody style={{ color: "white" }}>
@@ -219,14 +240,18 @@ export default function ProjectTable() {
                     {project._id || 'N/A'}
                   </TableCell> */}
                     <TableCell align="left">{project.project_name || 'N/A'}</TableCell>
-                    <TableCell align="left">{project.start_date || 'N/A'}</TableCell>
-                    <TableCell align="left">{project.end_date || 'N/A'}</TableCell>
+                    <TableCell align="left" className="whitespace-nowrap">{project.start_date || 'N/A'}</TableCell>
+                    <TableCell align="left" className="whitespace-nowrap">{project.end_date || 'N/A'}</TableCell>
                     <TableCell align="left">{project.description || 'N/A'}</TableCell>
                     {/* <TableCell align="left">{project.Projects || 'N/A'}</TableCell> */}
-                    <TableCell align="left">{project.status || 'N/A'}</TableCell>
-                    <TableCell align="left">
-                      <button onClick={() => handleDelete(project._id)}>Delete</button>
-                      <button onClick={() => handleOpenEditDialog(project)}>Update</button>
+                    <TableCell align="center">
+                      <span className="status" style={makeStyle(project.status || 'N/A')}>{project.status || 'N/A'}</span>
+                    </TableCell>
+                    <TableCell align="center">
+                      <div className="flex">
+                      <IconButton onClick={() => handleOpenEditDialog(project)}><EditIcon /></IconButton>
+                      <IconButton onClick={() => handleDelete(project._id)}><DeleteIcon /></IconButton>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
