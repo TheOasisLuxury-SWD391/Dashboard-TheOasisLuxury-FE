@@ -47,7 +47,7 @@ export default function SubdivisionTable() {
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
-  // const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchSubdivisions();
@@ -160,7 +160,7 @@ export default function SubdivisionTable() {
 
       if (response.ok) {
         const addedSubdivision = await response.json();
-        setSubdivisions([...subdivions, addedSubdivision]); // Update the state
+        setSubdivisions([...subdivisions, addedSubdivision]); // Update the state
         console.log("Subdivision added successfully");
       } else {
         console.error("Failed to add Subdivision");
@@ -176,89 +176,6 @@ export default function SubdivisionTable() {
   };
   return (
     <Container maxWidth="md" sx={{ mt: 8, mb: 8 }}>
-<<<<<<< Updated upstream
-      <Dialog open={openDialog} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Add New Subdivision</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Subdivision Name"
-            type="text"
-            fullWidth
-            value={newSubdivision.name}
-            onChange={handleChange('name')}
-          />
-          <TextField
-            margin="dense"
-            id="location"
-            label="Location"
-            type="text"
-            fullWidth
-            value={newSubdivision.location}
-            onChange={handleChange('location')}
-          />
-          <TextField
-            margin="dense"
-            id="insertDate"
-            label="Insert Date"
-            type="date"
-            fullWidth
-            InputLabelProps={{
-              shrink: true,
-            }}
-            value={newSubdivision.insertDate}
-            onChange={handleChange('insertDate')}
-          />
-          <TextField
-            margin="dense"
-            id="updateDate"
-            label="Update Date"
-            type="date"
-            fullWidth
-            InputLabelProps={{
-              shrink: true,
-            }}
-            value={newSubdivision.updateDate}
-            onChange={handleChange('updateDate')}
-          />
-          <TextField
-            margin="dense"
-            id="quantityVilla"
-            label="Quantity Villa"
-            type="number"
-            fullWidth
-            value={newSubdivision.quantityVilla}
-            onChange={handleChange('quantityVilla')}
-          />
-          <FormControl fullWidth margin="dense">
-            <InputLabel id="status-label">Status</InputLabel>
-            <Select
-              labelId="status-label"
-              id="status"
-              name="status"
-              value={newSubdivision.status}
-              onChange={handleInputChange}
-              label="Status"
-            >
-              <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-              <MenuItem value="INACTIVE">INACTIVE</MenuItem>
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAdd} color="primary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-=======
->>>>>>> Stashed changes
       <Box display="flex" justifyContent="flex-end" mb={2}>
         <Tooltip title="Add New Subdivision">
           <IconButton color="primary" onClick={handleClickOpen}>
@@ -266,105 +183,6 @@ export default function SubdivisionTable() {
           </IconButton>
         </Tooltip>
       </Box>
-<<<<<<< Updated upstream
-      <div style={{ padding: '12px', width: '100%' }}>
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Insert Date</TableCell>
-                <TableCell>Update Date</TableCell>
-                <TableCell>Quantity</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Project ID</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredRows.map((row) => (
-                <TableRow key={row.project_id}>
-                  {editRowId === row.project_id ? (
-                    // Editable cells for the row in edit mode
-                    <>
-                      <TableCell>
-                        <TextField
-                          value={editRowData.subdivision_name}
-                          onChange={handleEditChange('subdivision_name')}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          value={editRowData.location}
-                          onChange={handleEditChange('location')}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          type="date"
-                          value={editRowData.insert_date}
-                          onChange={handleEditChange('insert_date')}
-                          size="small"
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          type="date"
-                          value={editRowData.update_date}
-                          onChange={handleEditChange('update_date')}
-                          size="small"
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          type="number"
-                          value={editRowData.quantityVilla}
-                          onChange={handleEditChange('quantityVilla')}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                          value={editRowData.status}
-                          onChange={handleEditChange('status')}
-                          size="small"
-                          displayEmpty
-                        >
-                          <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-                          <MenuItem value="INACTIVE">INACTIVE</MenuItem>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        {editRowData.project_id}
-                      </TableCell>
-                      <TableCell align="right">
-                        <IconButton onClick={saveEdit}><SaveIcon /></IconButton>
-                        <IconButton onClick={cancelEdit}><CancelIcon /></IconButton>
-                      </TableCell>
-                    </>
-                  ) : (
-                    // Non-editable row display
-                    <>
-                      <TableCell>{row.subdivision_name}</TableCell>
-                      <TableCell>{row.location}</TableCell>
-                      <TableCell>{row.insert_date}</TableCell>
-                      <TableCell>{row.update_date}</TableCell>
-                      <TableCell>{row.quantityVilla}</TableCell>
-                      <TableCell>{row.status}</TableCell>
-                      <TableCell>{row.project_id}</TableCell>
-                      <TableCell align="right">
-                        <IconButton onClick={() => startEdit(row)}><EditIcon /></IconButton>
-                        <IconButton onClick={() => handleDelete(row.project_id)}><DeleteIcon /></IconButton>
-                      </TableCell>
-                    </>
-                  )}
-=======
       <CreateSubdivisionDialog
         open={openDialog}
         handleClose={() => setOpenDialog(false)}
@@ -393,7 +211,6 @@ export default function SubdivisionTable() {
                   <TableCell>Status</TableCell>
                   <TableCell>ProjectID</TableCell>
                   <TableCell align="right">Actions</TableCell>
->>>>>>> Stashed changes
                 </TableRow>
               </TableHead>
               <TableBody>
