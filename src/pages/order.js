@@ -1,7 +1,12 @@
 import React from 'react';
+import ProjectTable from '../components/Table/ProjectTable';
+import OrderTable from '../components/Table/OrderTable';
 
-function OrdersPage() {
-  return <div>This is the Orders page</div>;
+function ProjectPage() {
+  return (
+    <div>This is the Order page </div>,
+    <OrderTable />
+  );
 }
 
-export default OrdersPage;
+export default ProjectPage;

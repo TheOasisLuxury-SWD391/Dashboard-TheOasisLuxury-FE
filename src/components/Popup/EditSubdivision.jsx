@@ -43,7 +43,7 @@ function EditSubdivisionDialog({ editSubdivision, setEditSubdivision, openEditDi
                     onChange={handleEditChange('location')}
                     size="small"
                 />
-                {/* <TextField
+                <TextField
                  margin="dense"
                  id="insert_date"
                  label="Insert Date"
@@ -64,7 +64,7 @@ function EditSubdivisionDialog({ editSubdivision, setEditSubdivision, openEditDi
                     onChange={handleEditChange('update_date')}
                     size="small"
                     InputLabelProps={{ shrink: true }}
-                /> */}
+                />
                 <TextField
                   margin="dense"
                   id="quantityVilla"

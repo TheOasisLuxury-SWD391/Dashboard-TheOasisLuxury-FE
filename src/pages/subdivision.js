@@ -4,7 +4,7 @@ import SubdivisionTable from '../components/Table/SubdivisionTable';
 function SubdivisionPage() {
   return (
     <div>This is the Subdivision page</div>,
-    <SubdivisionTable/>
+   <SubdivisionTable/>
   );
     
 }

@@ -194,7 +194,7 @@ export default function ProjectTable() {
     <Container maxWidth="md" className="">
       {/* <h3>Project List</h3> */}
       <Typography variant="h6">Project List</Typography>
-      <Box display="flex" justifyContent="flex-end" mb={2}>
+      <Box display="flex" justifyContent="flex-start" mb={2} mt={4}>
         <Tooltip title="Add New Project">
           <IconButton color="primary" onClick={handleClickOpen}>
             <AddCircleOutlineIcon />
@@ -217,7 +217,7 @@ export default function ProjectTable() {
       />
       {/* Table Projects list */}
       <div style={{ padding: '12px', width: '100%' }}>
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <Paper sx={{ width: '140%', overflow: 'hidden' }}>
           <TableContainer>
             <Table>
               <TableHead>
@@ -245,7 +245,7 @@ export default function ProjectTable() {
                     <TableCell align="left">{project.description || 'N/A'}</TableCell>
                     {/* <TableCell align="left">{project.Projects || 'N/A'}</TableCell> */}
                     <TableCell align="center">
-                      <span className="status" style={makeStyle(project.status || 'N/A')}>{project.status || 'N/A'}</span>
+                      <span className="status" style={makeStyle(project.status || 'INACTIVE')}>{project.status || 'INACTIVE'}</span>
                     </TableCell>
                     <TableCell align="center">
                       <div className="flex">

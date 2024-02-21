@@ -15,6 +15,8 @@ import OrdersPage from './pages/order';
 import ProjectPage from './pages/project';
 import { useEffect, useState } from 'react';
 import AuthComponent from './pages/login';
+import AccountPage from './pages/customer';
+import VillaPage from './pages/villa';
 
 function App() {
 
@@ -33,14 +35,23 @@ function App() {
             <>
               <Sidebar />
               <Routes>
-                <Route path="/" element={<MainDash />} />
+              <Route
+                path="/"
+                element={
+                  <>
+                    <MainDash />
+                    <RightSide />
+                  </>
+                }
+              />
                 <Route path="/orders" element={<OrdersPage />} />
-                <Route path="/customers" element={<CustomerPage />} />
+                <Route path="/accounts" element={<AccountPage />} />
                 <Route path="/subdivisions" element={<SubdivisionPage />} />
                 <Route path="/projects" element={<ProjectPage />} />
+                <Route path="/villas" element={<VillaPage />} />
                 <Route path="/analytics" element={<AnalyticPage />} />
               </Routes>
-              <RightSide />
+           
             </>
           </div>
         ) : (
