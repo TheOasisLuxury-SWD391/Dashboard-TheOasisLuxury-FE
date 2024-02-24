@@ -19,6 +19,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateSubdivisionDialog from '../Popup/CreateSubdivision';
 import EditSubdivisionDialog from '../Popup/EditSubdivision';
+import InputBase from '@mui/material/InputBase';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function SubdivisionTable() {
   const makeStyle = (status) => {
@@ -48,6 +50,11 @@ export default function SubdivisionTable() {
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
+  const [isSearchingById, setIsSearchingById] = useState(false);
+  const [searchId, setSearchId] = useState('');
+
+
+
   // const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -56,7 +63,12 @@ export default function SubdivisionTable() {
 
   const fetchSubdivisions = async () => {
     try {
+
       const token = localStorage.getItem('token'); // Lấy token từ localStorage
+      let url = "http://localhost:5000/api/v1/subdivisions/";
+      if (isSearchingById && searchId) {
+        url += searchId;  // Assuming your API supports searching by ID directly in the URL
+      }
       const response = await fetch("http://localhost:5000/api/v1/subdivisions/", {
         headers: {
           'Authorization': `Bearer ${token}`, // Thêm token vào header
@@ -79,28 +91,28 @@ export default function SubdivisionTable() {
   const handleDelete = async (subdivisionId) => {
     try {
       const token = localStorage.getItem('token');
-  
+
       if (!token) {
         console.error("Token is missing. Unable to delete subdivision.");
         return;
       }
-  
+
       const response = await fetch(`http://localhost:5000/api/v1/subdivisions/${subdivisionId}`, {
         method: "DELETE",
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
-  
+
       if (response.ok) {
-        fetchSubdivisions(); 
+        fetchSubdivisions();
         console.log("Subdivision deleted successfully");
       } else {
-       
+
         if (response.status === 401 || response.status === 403) {
           console.error("Unauthorized: Check if the provided token is valid.");
         } else {
-         
+
           const errorMessage = await response.text();
           console.error(`Failed to delete subdivision. Server response: ${errorMessage}`);
         }
@@ -109,8 +121,8 @@ export default function SubdivisionTable() {
       console.error("Error deleting subdivision:", error.message);
     }
   };
-  
-  
+
+
   const handleUpdate = async () => {
     console.log('editSubdivision', editSubdivision);
     try {
@@ -191,16 +203,29 @@ export default function SubdivisionTable() {
   //   setSearchTerm(event.target.value);
   // };
   return (
-    
-    <Container maxWidth="md" sx={{  }}>
+
+    <Container maxWidth="md" sx={{}}>
       <Typography variant="h6">Subdivision List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2} >
-      <Tooltip title="Add New Subdivision">
-  <IconButton color="primary" onClick={handleClickOpen}>
-    <AddCircleOutlineIcon />
-  </IconButton>
-</Tooltip>
+        <Tooltip title="Add New Subdivision">
+          <IconButton color="primary" onClick={handleClickOpen}>
+            <AddCircleOutlineIcon />
+          </IconButton>
+        </Tooltip>
+        <div style={{ marginLeft: 'auto', marginRight: '16px' }}>
+          <Paper component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 250 }}>
+            <InputBase
+              placeholder="Search"
+              inputProps={{ 'aria-label': 'search' }}
+              value={searchId}
+              onChange={(e) => setSearchId(e.target.value)}
+            />
+            <IconButton type="submit"justifyContent="flex-end" aria-label="search" onClick={() => setIsSearchingById(!isSearchingById)}>
+              <SearchIcon />
+            </IconButton>
 
+          </Paper>
+        </div>
       </Box>
       <CreateSubdivisionDialog
         open={openDialog}
@@ -214,9 +239,9 @@ export default function SubdivisionTable() {
         handleCloseEditDialog={handleCloseEditDialog}
         handleUpdate={handleUpdate}
       />
-   <div style={{ padding: '16px', width: '100%' }}>
+      <div style={{ padding: '16px', width: '100%' }}>
         <Paper sx={{ width: '140%', overflow: 'hidden' }}>
-          <TableContainer>
+        <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -227,52 +252,54 @@ export default function SubdivisionTable() {
                   <TableCell>Update Date</TableCell>
                   <TableCell>Quantity</TableCell>
                   <TableCell>Status</TableCell>
-                 
-                  <TableCell align="right">Actions</TableCell>
+
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-              {Array.isArray(subdivisions) && subdivisions.map((subdivision, index) => (
-                  <TableRow key={subdivision._id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell align="left"  style={{ whiteSpace: 'nowrap' }} >{subdivision.subdivision_name || 'N/A'}</TableCell>
-                    <TableCell align="left"  style={{ whiteSpace: 'nowrap' }} >{subdivision.location || 'N/A'}</TableCell>
-                    <TableCell align="left" >
-          {subdivision.insert_date
-            ? new Date(subdivision.insert_date).toLocaleString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              })
-            : 'N/A'}
-        </TableCell>
-        <TableCell align="left">
-          {subdivision.update_date
-            ? new Date(subdivision.update_date).toLocaleString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              })
-            : 'N/A'}
-        </TableCell>
+                {Array.isArray(subdivisions) && subdivisions
+                  .filter(subdivision => subdivision._id.toLowerCase().includes(searchId.toLowerCase()))
+                  .map((subdivision, index) => (
+                    <TableRow key={subdivision._id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.subdivision_name || 'N/A'}</TableCell>
+                      <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.location || 'N/A'}</TableCell>
+                      <TableCell align="left" >
+                        {subdivision.insert_date
+                          ? new Date(subdivision.insert_date).toLocaleString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                          })
+                          : 'N/A'}
+                      </TableCell>
+                      <TableCell align="left">
+                        {subdivision.update_date
+                          ? new Date(subdivision.update_date).toLocaleString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                          })
+                          : 'N/A'}
+                      </TableCell>
 
-                    <TableCell align="left">{subdivision.quantityVilla || 'N/A'}</TableCell>
-                    <TableCell align="left">
-                      <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
-                    </TableCell>
-                    {/* <TableCell align="left">{subdivision.project_id || 'N/A'}</TableCell> */}
-                    <TableCell align="center">
-                      <div className="flex">
-                        <IconButton onClick={() => handleOpenEditDialog(subdivision)}><EditIcon /></IconButton>
-                        <IconButton onClick={() => handleDelete(subdivision._id)}><DeleteIcon /></IconButton>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <TableCell align="left">{subdivision.quantityVilla || 'N/A'}</TableCell>
+                      <TableCell align="left">
+                        <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
+                      </TableCell>
+
+                      <TableCell align="center">
+                        <div className="flex">
+                          <IconButton onClick={() => handleOpenEditDialog(subdivision)}><EditIcon /></IconButton>
+                          <IconButton onClick={() => handleDelete(subdivision._id)}><DeleteIcon /></IconButton>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
-          </Paper>
+        </Paper>
       </div>
     </Container>
   );

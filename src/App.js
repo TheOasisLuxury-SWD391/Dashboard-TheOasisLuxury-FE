@@ -58,7 +58,7 @@ function App() {
           <div>
             <AuthComponent setIsLoggedIn={setIsLoggedIn} />
           </div>
-        )}
+        )}  
       </div>
     </Router>
   );

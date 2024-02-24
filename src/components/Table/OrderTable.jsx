@@ -60,7 +60,7 @@ export default function OrderTable() {
      
       <div style={{ padding: '8px', width: '100%' }}>
         <Paper sx={{ width: '140%', overflow: 'hidden' }}>
-          <TableContainer>
+        <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>

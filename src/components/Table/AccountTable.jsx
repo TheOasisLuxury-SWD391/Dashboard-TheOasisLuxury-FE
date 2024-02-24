@@ -196,9 +196,9 @@ export default function AccountTable() {
         handleCloseEditDialog={handleCloseEditDialog}
         handleUpdate={handleUpdate} />
       <div style={{ padding: '8px', width: '100%' }}>
-        <Paper sx={{ width: '140%', overflow: 'hidden' }}>
+        <Paper sx={{ width: '150%', overflow: 'hidden' }}>
 
-          <TableContainer>
+        <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>

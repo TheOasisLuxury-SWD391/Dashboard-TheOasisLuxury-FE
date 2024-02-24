@@ -217,7 +217,7 @@ export default function VillaTable() {
             />
             <div style={{ padding: '16px', width: '100%' }}>
                 <Paper sx={{ width: '140%', overflow: 'hidden' }}>
-                    <TableContainer>
+                <TableContainer sx={{ maxHeight: 400 }}>
                         <Table>
                             <TableHead>
                                 <TableRow>
