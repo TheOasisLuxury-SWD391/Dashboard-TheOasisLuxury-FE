@@ -1,7 +1,13 @@
 import React from 'react';
+import AccountTable from '../components/Table/AccountTable';
 
-function CustomerPage() {
-  return <div>This is the Customer page</div>;
+
+function AccountPage() {
+  return (
+    <div>This is the Account page</div>,
+   <AccountTable/>
+  );
+   
 }
 
-export default CustomerPage;
+export default AccountPage;

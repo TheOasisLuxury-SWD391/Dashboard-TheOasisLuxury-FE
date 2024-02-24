@@ -13,12 +13,12 @@ import {
   MenuItem,
 } from "@mui/material";
 
-const CreateSubdivisionDialog = ({ open, handleClose, handleInputChange, setSubdivisions, subdivisions }) => {
+const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisions }) => {
   const [newSubdivision, setNewSubdivision] = useState({
     name: '',
     location: '',
-    insertDate: '',
-    updateDate: '',
+    insert_date: '',
+    update_date: '',
     quantityVilla: '',
     status: '',
     projectId: '',
@@ -78,30 +78,24 @@ const CreateSubdivisionDialog = ({ open, handleClose, handleInputChange, setSubd
           value={newSubdivision.location}
           onChange={handleChange('location')}
         />
+       <TextField
+                    margin="dense"
+                    id="insert_date"
+                    label="InsertDate"
+                    type="date"
+                    fullWidth
+                    value={newSubdivision.insert_date}
+                    onChange={handleChange('insert_date')}
+                />
         <TextField
-          margin="dense"
-          id="insertDate"
-          label="Insert Date"
-          type="date"
-          fullWidth
-          InputLabelProps={{
-            shrink: true,
-          }}
-          value={newSubdivision.insertDate}
-          onChange={handleChange('insertDate')}
-        />
-        <TextField
-          margin="dense"
-          id="updateDate"
-          label="Update Date"
-          type="date"
-          fullWidth
-          InputLabelProps={{
-            shrink: true,
-          }}
-          value={newSubdivision.updateDate}
-          onChange={handleChange('updateDate')}
-        />
+                    margin="dense"
+                    id="update_date"
+                    label="UpdateDate"
+                    type="date"
+                    fullWidth
+                    value={newSubdivision.update_date}
+                    onChange={handleChange('update_date')}
+                />
         <TextField
           margin="dense"
           id="quantityVilla"
@@ -118,7 +112,7 @@ const CreateSubdivisionDialog = ({ open, handleClose, handleInputChange, setSubd
             id="status"
             name="status"
             value={newSubdivision.status}
-            onChange={handleInputChange}
+            onChange={handleChange('status')}
             label="Status"
           >
             <MenuItem value="ACTIVE">ACTIVE</MenuItem>

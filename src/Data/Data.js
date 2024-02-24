@@ -30,9 +30,9 @@ export const SidebarData = [
     heading: "Orders",
   },
   { 
-    path: '/customers',
+    path: '/accounts',
     icon: UilUsersAlt,
-    heading: "Customers",
+    heading: "Accounts",
   },
   { 
     path: '/projects',
@@ -44,7 +44,11 @@ export const SidebarData = [
     icon: UilPackage,
     heading: 'Subdivisions'
   },
-  
+  { 
+    path: '/villas',
+    icon: UilClipboardAlt,
+    heading: 'Villas'
+  },
   { 
     path: '/analytics',
     icon: UilChart,

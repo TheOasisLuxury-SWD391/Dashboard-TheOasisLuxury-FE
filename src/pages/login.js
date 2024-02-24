@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, Button, Container, Box, Typography, Checkbox, FormControlLabel, IconButton, InputAdornment } from '@mui/material';
+import { TextField, Button, Container, Box, Typography, Checkbox, FormControlLabel, IconButton, InputAdornment, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
@@ -16,9 +16,10 @@ const AuthComponent = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [openForgetPasswordDialog, setOpenForgetPasswordDialog] = useState(false);
 
   useEffect(() => {
-    // Load credentials from local storage on component mount
+    
     const savedUserName = localStorage.getItem('savedUserName');
     const savedPassword = localStorage.getItem('savedPassword');
     if (savedUserName && savedPassword) {
@@ -37,7 +38,41 @@ const AuthComponent = (props) => {
     console.log("Remember Me state:", event.target.checked); // Debugging
   };
 
+  const handleForgetPasswordClick = () => {
+    setOpenForgetPasswordDialog(true);
+  };
 
+  const handleCloseForgetPasswordDialog = () => {
+    setOpenForgetPasswordDialog(false);
+  };
+  // const handleForgetPasswordRequest = async () => {
+  //   try {
+    
+  //     if (!email || typeof email !== 'string') {
+  //       console.error('Email không hợp lệ.');
+  //       return;
+  //     }
+  
+  //     const response = await fetch('http://localhost:5000/api/v1/users/forgot-password', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email: email }),
+  //     });
+  
+  //     if (response.ok) {
+  //       console.log('Yêu cầu đặt lại mật khẩu đã được gửi.');
+  //     } else {
+  //       console.error('Yêu cầu đặt lại mật khẩu thất bại.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Lỗi khi gửi yêu cầu đặt lại mật khẩu:', error);
+  //   }
+  // };
+  
+  
+  
   const handleLogin = async () => {
     debugger
     try {
@@ -51,21 +86,20 @@ const AuthComponent = (props) => {
 
       if (response.ok) {
         const data = await response.json();
-        // Set token in local storage or state
+       
         props.setIsLoggedIn(true);
-        const accessToken = data.result.access_token; // Trích xuất access_token
-        localStorage.setItem('token', accessToken); // Lưu token vào localStorage
+        const accessToken = data.result.access_token; 
+        localStorage.setItem('token', accessToken); 
         console.log('Login successful');
         if (rememberMe) {
-          // Save credentials to local storage
+         
           localStorage.setItem('savedUserName', loginData.user_name);
           localStorage.setItem('savedPassword', loginData.password);
         } else {
-          // Clear saved credentials if "Remember Me" is not checked
+      
           localStorage.removeItem('savedUserName');
           localStorage.removeItem('savedPassword');
         }
-
       } else {
         console.error('Login failed');
       }
@@ -86,7 +120,7 @@ const AuthComponent = (props) => {
 
       if (response.ok) {
         const data = await response.json();
-        // Set token in local storage or state
+       
         setIsLoggedIn(true);
         console.log('Registration successful');
       } else {
@@ -144,6 +178,10 @@ const AuthComponent = (props) => {
             }
             label="Nhớ mật khẩu"
           />
+          {/* <span style={{ cursor: 'pointer', color: 'blue', marginLeft: '50px' }} onClick={handleForgetPasswordClick}>
+            Quên mật khẩu?
+          </span> */}
+
           <Button
             fullWidth
             variant="contained"
@@ -153,8 +191,33 @@ const AuthComponent = (props) => {
           >
             Đăng nhập
           </Button>
+
         </form>
       </Box>
+
+      {/* <Dialog open={openForgetPasswordDialog} onClose={handleCloseForgetPasswordDialog}>
+        <DialogTitle>Quên mật khẩu</DialogTitle>
+        <DialogContent>
+
+          <Typography>Vui lòng nhập địa chỉ email của bạn để đặt lại mật khẩu.</Typography>
+          <TextField
+            fullWidth
+            id="email"
+            label="Email"
+            margin="normal"
+            variant="outlined"
+          // onChange={(e) => setEmail(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseForgetPasswordDialog} color="primary">
+            Hủy
+          </Button>
+          <Button onClick={handleForgetPasswordRequest} color="primary">
+            Gửi yêu cầu
+          </Button>
+        </DialogActions>
+      </Dialog> */}
     </Container>
   );
 };
