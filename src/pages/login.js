@@ -99,6 +99,7 @@ const AuthComponent = (props) => {
           localStorage.removeItem('savedUserName');
           localStorage.removeItem('savedPassword');
         }
+        
       } else {
         console.error('Login failed');
       }

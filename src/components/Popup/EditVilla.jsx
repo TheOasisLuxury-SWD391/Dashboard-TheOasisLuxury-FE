@@ -34,28 +34,7 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
                     size="small"
                 />
 
-                <TextField
-                    margin="dense"
-                    id="insert_date"
-                    label="Insert Date"
-                    type="date"
-                    fullWidth
-                    value={editVilla?.insert_date}
-                    onChange={handleEditChange('insert_date')}
-                    size="small"
-                    InputLabelProps={{ shrink: true }}
-                />
-                <TextField
-                    margin="dense"
-                    id="update_date"
-                    label="Update Date"
-                    type="date"
-                    fullWidth
-                    value={editVilla?.update_date}
-                    onChange={handleEditChange('update_date')}
-                    size="small"
-                    InputLabelProps={{ shrink: true }}
-                />
+                
                 <TextField
                     margin="dense"
                     id="address"

@@ -218,7 +218,7 @@ export default function ProjectTable() {
       {/* Table Projects list */}
       <div style={{ padding: '12px', width: '100%' }}>
         <Paper sx={{ width: '140%', overflow: 'hidden' }}>
-          <TableContainer>
+        <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>
