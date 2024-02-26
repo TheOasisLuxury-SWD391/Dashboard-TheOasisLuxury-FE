@@ -21,6 +21,7 @@ const Sidebar = () => {
   }
   
   console.log(window.innerWidth)
+  
   return (
     <>
       <div className="bars" style={expanded?{left: '60%'}:{left: '5%'}} onClick={()=>setExpaned(!expanded)}>

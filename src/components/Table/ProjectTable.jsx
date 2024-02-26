@@ -118,7 +118,7 @@ export default function ProjectTable() {
       // Tạo một bản sao của editProject và xóa trường '_id' => Tránh bị thay đổi _id vì trong môngDB ko cho phép thay đổi _id
       const projectData = { ...editProject };
       delete projectData._id;
-      debugger;
+       
 
       const response = await fetch(`http://localhost:5000/api/v1/projects/${editProject._id}`, {
         method: 'PATCH',

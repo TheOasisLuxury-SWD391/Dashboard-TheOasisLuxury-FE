@@ -74,7 +74,7 @@ const AuthComponent = (props) => {
   
   
   const handleLogin = async () => {
-    debugger
+     
     try {
       const response = await fetch('http://localhost:5000/api/v1/users/login/', {
         method: 'POST',
@@ -89,7 +89,9 @@ const AuthComponent = (props) => {
        
         props.setIsLoggedIn(true);
         const accessToken = data.result.access_token; 
+        const refresh_token = data.result.refresh_token;
         localStorage.setItem('token', accessToken); 
+        localStorage.setItem('token',refresh_token)
         console.log('Login successful');
         if (rememberMe) {
          

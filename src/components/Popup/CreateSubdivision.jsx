@@ -21,7 +21,7 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
     update_date: '',
     quantityVilla: '',
     status: '',
-    projectId: '',
+    project_id: '',
   });
 
   const handleChange = (prop) => (event) => {
@@ -119,6 +119,15 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
             <MenuItem value="INACTIVE">INACTIVE</MenuItem>
           </Select>
         </FormControl>
+        <TextField
+          margin="dense"
+          id="project_id"
+          label="project_id"
+          type="string"
+          fullWidth
+          value={newSubdivision.project_id}
+          onChange={handleChange('project_id')}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
