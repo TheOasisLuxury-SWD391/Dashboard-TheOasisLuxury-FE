@@ -95,8 +95,8 @@ const CreateTimeShareDialog = ({ open, handleClose, setTimeShares, timeshares })
             onChange={handleChange('deflag')}
             label="deflag"
           >
-            <MenuItem value="true">true</MenuItem>
-            <MenuItem value="false">false</MenuItem>
+            <MenuItem value="TRUE">TRUE</MenuItem>
+            <MenuItem value="FALSE">FALSE</MenuItem>
           </Select>
         </FormControl>
         <TextField
