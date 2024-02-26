@@ -50,6 +50,11 @@ export const SidebarData = [
     heading: 'Villas'
   },
   { 
+    path: '/timeshares',
+    icon: UilClipboardAlt,
+    heading: 'Timeshares'
+  },
+  { 
     path: '/analytics',
     icon: UilChart,
     heading: 'Analytics'
