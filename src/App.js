@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import AuthComponent from './pages/login';
 import AccountPage from './pages/customer';
 import VillaPage from './pages/villa';
+import TimeSharePage from './pages/timeshare';
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
                 <Route path="/subdivisions" element={<SubdivisionPage />} />
                 <Route path="/projects" element={<ProjectPage />} />
                 <Route path="/villas" element={<VillaPage />} />
+                <Route path="/timeshares" element={<TimeSharePage />} />
                 <Route path="/analytics" element={<AnalyticPage />} />
               </Routes>
            
