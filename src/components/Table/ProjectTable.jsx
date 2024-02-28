@@ -32,6 +32,8 @@ import CreateProjectDialog from "../Popup/CreateProject";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import "./Table.css"
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function ProjectTable() {
@@ -102,8 +104,10 @@ export default function ProjectTable() {
         // Update the projects list after deletion
         fetchProjects();
         console.log("Project deleted successfully");
+        toast.success("Project deleted successfully");
       } else {
         console.error("Failed to delete project");
+        toast.error("Failed to delete project")
       }
     } catch (error) {
       console.error("Error deleting project:", error);
@@ -118,7 +122,7 @@ export default function ProjectTable() {
       // Tạo một bản sao của editProject và xóa trường '_id' => Tránh bị thay đổi _id vì trong môngDB ko cho phép thay đổi _id
       const projectData = { ...editProject };
       delete projectData._id;
-      debugger;
+      
 
       const response = await fetch(`http://localhost:5000/api/v1/projects/${editProject._id}`, {
         method: 'PATCH',
@@ -132,8 +136,10 @@ export default function ProjectTable() {
         // Update the projects list after deletion
         fetchProjects();
         console.log("Project update successfully");
+        toast.success("Project update successfully")
       } else {
         console.error("Failed to update project");
+        toast.error("Failed to update project");
       }
     } catch (error) {
       console.error("Error updating project:", error);
@@ -181,11 +187,14 @@ export default function ProjectTable() {
         const addedProject = await response.json();
         setProjects([...projects, addedProject]); // Update the state
         console.log("Project added successfully");
+        toast.success("Project added successfully");
       } else {
         console.error("Failed to add project");
+        toast.error("Failed to add project");
       }
     } catch (error) {
       console.error("Error adding project:", error);
+      toast.success("Error adding project");
     }
     handleClose();
   };
@@ -217,7 +226,7 @@ export default function ProjectTable() {
       />
       {/* Table Projects list */}
       <div style={{ padding: '12px', width: '100%' }}>
-        <Paper sx={{ width: '140%', overflow: 'hidden' }}>
+        <Paper sx={{ width: '150%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
@@ -261,6 +270,7 @@ export default function ProjectTable() {
           </TableContainer>
         </Paper>
       </div>
+      <ToastContainer/>
     </Container>
   );
 }

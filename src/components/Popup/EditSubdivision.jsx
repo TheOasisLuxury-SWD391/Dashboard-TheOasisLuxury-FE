@@ -65,15 +65,7 @@ function EditSubdivisionDialog({ editSubdivision, setEditSubdivision, openEditDi
                     size="small"
                     InputLabelProps={{ shrink: true }}
                 />
-                <TextField
-                  margin="dense"
-                  id="quantityVilla"
-                  label="Quantity Villa"
-                    type="number"
-                    value={editSubdivision?.quantityVilla}
-                    onChange={handleEditChange('quantityVilla')}
-                    size="small"
-                />
+              
                 <FormControl fullWidth margin="dense">
                     <InputLabel id="status-label">Status</InputLabel>
                     <Select
@@ -88,6 +80,15 @@ function EditSubdivisionDialog({ editSubdivision, setEditSubdivision, openEditDi
                         <MenuItem value="INACTIVE">INACTIVE</MenuItem>
                     </Select>
                 </FormControl>
+                <TextField
+                  margin="dense"
+                  id="project_id"
+                  label="ProjectId"
+                    type="text"
+                    value={editSubdivision?.project_id}
+                    onChange={handleEditChange('project_id')}
+                    size="small"
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCloseEditDialog}>Cancel</Button>

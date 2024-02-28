@@ -19,6 +19,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateTimeShareDialog from '../Popup/CreateTimeShare';
 import EditTimeShareDialog from '../Popup/EditTimeShare';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function TimeShareTable() {
     const makeStyle = (status) => {
@@ -93,6 +95,7 @@ export default function TimeShareTable() {
             if (response.ok) {
                 fetchTimeShares();
                 console.log("TimeShare deleted successfully");
+                toast.success("TimeShare deleted successfully");
             } else {
 
                 if (response.status === 401 || response.status === 403) {
@@ -101,6 +104,7 @@ export default function TimeShareTable() {
 
                     const errorMessage = await response.text();
                     console.error(`Failed to delete timeshare. Server response: ${errorMessage}`);
+                    toast.error("Failed to delete timeshare")
                 }
             }
         } catch (error) {
@@ -116,7 +120,7 @@ export default function TimeShareTable() {
 
             const timeshareData = { ...editTimeShare };
             delete timeshareData._id;
-            debugger;
+            
 
             const response = await fetch(`http://localhost:5000/api/v1/timeshares/${editTimeShare._id}`, {
                 method: 'PATCH',
@@ -130,11 +134,14 @@ export default function TimeShareTable() {
 
                 fetchTimeShares();
                 console.log("TimeShare update successfully");
+                toast.success("TimeShare update successfully")
             } else {
                 console.error("Failed to update TimeShare");
+                toast.error("Failed to update TimeShare")
             }
         } catch (error) {
             console.error("Error updating TimeShare:", error);
+            toast.error("Error updating TimeShare")
         }
         handleCloseEditDialog();
     };
@@ -176,11 +183,14 @@ export default function TimeShareTable() {
                 const addedTimeShare = await response.json();
                 setTimeShares([...timeshares, addedTimeShare]);
                 console.log("timeshare added successfully");
+                toast.success("Timeshare added successfully")
             } else {
                 console.error("Failed to add timeshare");
+                toast.error("Failed to add timeshare");
             }
         } catch (error) {
             console.error("Error adding timeshare:", error);
+            toast.success("Timeshare added successfully");
         }
         handleClose();
     };
@@ -213,8 +223,8 @@ export default function TimeShareTable() {
                 handleUpdate={handleUpdate}
             />
             <div style={{ padding: '16px', width: '100%' }}>
-                <Paper sx={{ width: '140%', overflow: 'hidden' }}>
-                    <TableContainer sx={{ maxHeight: 400 }}>
+                <Paper sx={{ width: '150%', overflow: 'hidden' }}>
+                    <TableContainer sx={{ maxHeight: 600 }}>
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -223,7 +233,7 @@ export default function TimeShareTable() {
                                     <TableCell>Insert Date</TableCell>
                                     <TableCell>Update Date</TableCell>
                                     <TableCell>Deflag</TableCell>
-                                    <TableCell>Type</TableCell>
+                                    <TableCell align="center">Type</TableCell>
 
                                     <TableCell align="left">Actions</TableCell>
                                 </TableRow>
@@ -256,7 +266,7 @@ export default function TimeShareTable() {
                                         <TableCell align="left">
                                             <span className="deflag" style={makeStyle(timeshare.deflag || 'FALSE')}>{timeshare.deflag || 'FALSE'}</span>
                                         </TableCell>
-                                        <TableCell align="left">{timeshare.time_share_type || 'N/A'}</TableCell>
+                                        <TableCell align="center">{timeshare.time_share_type || 'N/A'}</TableCell>
 
                                         <TableCell align="center">
                                             <div className="flex">
@@ -271,6 +281,7 @@ export default function TimeShareTable() {
                     </TableContainer>
                 </Paper>
             </div>
+            <ToastContainer/>
         </Container>
     );
 }

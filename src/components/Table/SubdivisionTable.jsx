@@ -20,8 +20,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CreateSubdivisionDialog from '../Popup/CreateSubdivision';
 import EditSubdivisionDialog from '../Popup/EditSubdivision';
 import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
 
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export default function SubdivisionTable() {
   const makeStyle = (status) => {
     if (status === 'ACTIVE') {
@@ -46,16 +47,15 @@ export default function SubdivisionTable() {
     updateDate: '',
     quantityVilla: '',
     status: '',
-    projectId: '',
+    project_id: '',
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
-  const [isSearchingById, setIsSearchingById] = useState(false);
-  const [searchId, setSearchId] = useState('');
 
 
 
-  // const [searchTerm, setSearchTerm] = useState('');
+
+
 
   useEffect(() => {
     fetchSubdivisions();
@@ -65,10 +65,8 @@ export default function SubdivisionTable() {
     try {
 
       const token = localStorage.getItem('token'); // Lấy token từ localStorage
-      let url = "http://localhost:5000/api/v1/subdivisions/";
-      if (isSearchingById && searchId) {
-        url += searchId;  // Assuming your API supports searching by ID directly in the URL
-      }
+
+
       const response = await fetch("http://localhost:5000/api/v1/subdivisions/", {
         headers: {
           'Authorization': `Bearer ${token}`, // Thêm token vào header
@@ -107,6 +105,7 @@ export default function SubdivisionTable() {
       if (response.ok) {
         fetchSubdivisions();
         console.log("Subdivision deleted successfully");
+        toast.success("Subdivision deleted successfully");
       } else {
 
         if (response.status === 401 || response.status === 403) {
@@ -119,6 +118,7 @@ export default function SubdivisionTable() {
       }
     } catch (error) {
       console.error("Error deleting subdivision:", error.message);
+      toast.error("Error deleting subdivision");
     }
   };
 
@@ -130,7 +130,7 @@ export default function SubdivisionTable() {
 
       const subdivisionData = { ...editSubdivision };
       delete subdivisionData._id;
-      debugger;
+
 
       const response = await fetch(`http://localhost:5000/api/v1/subdivisions/${editSubdivision._id}`, {
         method: 'PATCH',
@@ -144,11 +144,14 @@ export default function SubdivisionTable() {
 
         fetchSubdivisions();
         console.log("Subdivision update successfully");
+        toast.success("Subdivision update successfully");
       } else {
         console.error("Failed to update Subdivision");
+        toast.error("Failed to update Subdivision");
       }
     } catch (error) {
       console.error("Error updating Subdivision:", error);
+      toast.error("Error updating Subdivision:");
     }
     handleCloseEditDialog();
   };
@@ -190,18 +193,19 @@ export default function SubdivisionTable() {
         const addedSubdivision = await response.json();
         setSubdivisions([...subdivisions, addedSubdivision]); // Update the state
         console.log("Subdivision added successfully");
+        toast.success("Subdivision added successfully");
       } else {
         console.error("Failed to add Subdivision");
+        toast.success("Failed to add Subdivision");
       }
     } catch (error) {
       console.error("Error adding subdivision:", error);
+      toast.error("Error adding subdivision")
     }
     handleClose();
   };
 
-  // const handleSearchChange = (event) => {
-  //   setSearchTerm(event.target.value);
-  // };
+
   return (
 
     <Container maxWidth="md" sx={{}}>
@@ -212,20 +216,7 @@ export default function SubdivisionTable() {
             <AddCircleOutlineIcon />
           </IconButton>
         </Tooltip>
-        <div style={{ marginLeft: 'auto', marginRight: '16px' }}>
-          <Paper component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 250 }}>
-            <InputBase
-              placeholder="Search"
-              inputProps={{ 'aria-label': 'search' }}
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
-            />
-            <IconButton type="submit"justifyContent="flex-end" aria-label="search" onClick={() => setIsSearchingById(!isSearchingById)}>
-              <SearchIcon />
-            </IconButton>
 
-          </Paper>
-        </div>
       </Box>
       <CreateSubdivisionDialog
         open={openDialog}
@@ -240,25 +231,24 @@ export default function SubdivisionTable() {
         handleUpdate={handleUpdate}
       />
       <div style={{ padding: '16px', width: '100%' }}>
-        <Paper sx={{ width: '140%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 600 }}>
+        <Paper sx={{ width: '150%', overflow: 'hidden' }}>
+          <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>No.</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Location</TableCell>
-                  <TableCell>Insert Date</TableCell>
-                  <TableCell>Update Date</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Status</TableCell>
-
+                  <TableCell align="left">Name</TableCell>
+                  <TableCell align="left">Location</TableCell>
+                  <TableCell align="left">Insert Date</TableCell>
+                  <TableCell align="left">Update Date</TableCell>
+                  <TableCell align="left">Quantity</TableCell>
+                  <TableCell align="center">Status</TableCell>
+                  <TableCell align="center">ProjectID</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {Array.isArray(subdivisions) && subdivisions
-                  .filter(subdivision => subdivision._id.toLowerCase().includes(searchId.toLowerCase()))
                   .map((subdivision, index) => (
                     <TableRow key={subdivision._id}>
                       <TableCell>{index + 1}</TableCell>
@@ -284,10 +274,10 @@ export default function SubdivisionTable() {
                       </TableCell>
 
                       <TableCell align="left">{subdivision.quantityVilla || 'N/A'}</TableCell>
-                      <TableCell align="left">
+                      <TableCell align="center">
                         <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
                       </TableCell>
-
+                      <TableCell align="left">{subdivision.project_id || 'N/A'}</TableCell>
                       <TableCell align="center">
                         <div className="flex">
                           <IconButton onClick={() => handleOpenEditDialog(subdivision)}><EditIcon /></IconButton>
@@ -301,6 +291,7 @@ export default function SubdivisionTable() {
           </TableContainer>
         </Paper>
       </div>
+      <ToastContainer />
     </Container>
   );
 }
