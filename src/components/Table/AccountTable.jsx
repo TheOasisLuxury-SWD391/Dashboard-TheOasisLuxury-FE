@@ -20,6 +20,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CreateAccountDialog from '../Popup/CreateAccount';
 import EditAccountDialog from '../Popup/EditAccount';
 
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function AccountTable() {
 
@@ -81,18 +83,22 @@ export default function AccountTable() {
       if (response.ok) {
         fetchAccounts();
         console.log("Account deleted successfully");
+        toast.success("Account deleted successfully");
       } else {
 
         if (response.status === 401 || response.status === 403) {
           console.error("Unauthorized: Check if the provided token is valid.");
+          toast.error("Deleting the Admin account is not allowed");
         } else {
 
           const errorMessage = await response.text();
           console.error(`Failed to delete Account. Server response: ${errorMessage}`);
+          toast.error("Failed to delete Account.")
         }
       }
     } catch (error) {
       console.error("Error deleting account:", error.message);
+      toast.error("Error deleting account")
     }
   };
 
@@ -104,7 +110,6 @@ export default function AccountTable() {
 
       const accountData = { ...editAccount };
       delete accountData._id;
-       
 
       const response = await fetch(`http://localhost:5000/api/v1/accounts/${editAccount._id}`, {
         method: 'PATCH',
@@ -118,11 +123,14 @@ export default function AccountTable() {
 
         fetchAccounts();
         console.log("Account update successfully");
+        toast.success("Account update successfully");
       } else {
         console.error("Failed to update Account");
+        toast.error("Failed to update Account");
       }
     } catch (error) {
       console.error("Error updating Account:", error);
+      toast.error("Error updating Account");
     }
     handleCloseEditDialog();
   };
@@ -166,9 +174,11 @@ export default function AccountTable() {
         console.log("Account added successfully");
       } else {
         console.error("Failed to add Account");
+        toast.error("Failed to add Account");
       }
     } catch (error) {
       console.error("Error adding Account:", error);
+      toast.error("Error adding Account:");
     }
     handleClose();
   };
@@ -210,7 +220,7 @@ export default function AccountTable() {
                   <TableCell>Email</TableCell>
                   <TableCell>Username</TableCell>
                   <TableCell>Role</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -250,6 +260,7 @@ export default function AccountTable() {
 
         </Paper>
       </div>
+      <ToastContainer/>
     </Container>
   );
 }

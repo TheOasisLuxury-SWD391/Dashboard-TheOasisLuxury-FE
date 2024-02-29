@@ -9,9 +9,7 @@ import Paper from "@mui/material/Paper";
 import "./Table.css";
 // import { ObjectId } from "mongodb"; 
 
-function createSubdivisionData(_id, subdivision_name, location, insert_date, update_date, quantityVilla, status, project_id, villas) {
-  return { _id, subdivision_name, location, insert_date, update_date, quantityVilla, status, project_id, villas };
-}
+
 function createData(name, trackingId, date, status) {
   return { name, trackingId, date, status };
 }
@@ -49,7 +47,7 @@ const makeStyle=(status)=>{
 
 export default function BasicTable() {
   return (
-      <div className="Table">
+      <div className="Table ml-20 ">
       <h3>Recent Orders</h3>
         <TableContainer
           component={Paper}

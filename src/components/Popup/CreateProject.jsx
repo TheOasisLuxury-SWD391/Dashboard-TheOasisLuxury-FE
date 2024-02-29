@@ -74,7 +74,7 @@ const handleAdd = async () => {
             margin="dense"
             id="start_date"
             label="Start Date"
-            type="text"
+            type="date"
             fullWidth
             value={newProject.start_date}
             onChange={handleChange('start_date')}
@@ -83,7 +83,7 @@ const handleAdd = async () => {
             margin="dense"
             id="end_date"
             label="End Date"
-            type="text"
+            type="date"
             fullWidth
             value={newProject.end_date}
             onChange={handleChange('end_date')}
@@ -104,7 +104,7 @@ const handleAdd = async () => {
               id="status"
               name="status"
               value={newProject.status}
-              onChange={handleInputChange}
+              onChange={handleChange('status')}
               label="Status"
             >
               <MenuItem value="ACTIVE">ACTIVE</MenuItem>

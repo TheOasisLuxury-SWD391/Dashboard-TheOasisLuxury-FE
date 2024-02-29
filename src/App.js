@@ -10,7 +10,7 @@ import '../src/style/index.css';
 
 import SubdivisionPage from './pages/subdivision';
 import AnalyticPage from './pages/analytic';
-import CustomerPage from './pages/customer';
+
 import OrdersPage from './pages/order';
 import ProjectPage from './pages/project';
 import { useEffect, useState } from 'react';
@@ -35,16 +35,21 @@ function App() {
           <div className="AppGlass">
             <>
               <Sidebar />
+              <div className="Header absolute top-10 right-0 flex items-center p-4 mr-20 text-white">
+                <div className="mr-4">
+                  <p className="text-lg font-bold text-blue-300">Hello, ADMIN!</p> 
+                </div>
+                <div className="rounded-full h-10 w-10 bg-gray-500 mr-4"></div>
+                <button
+                  onClick={() => setIsLoggedIn(false)}
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-2 rounded"
+                >
+                  Logout
+                </button>
+              </div>
               <Routes>
-              <Route
-                path="/"
-                element={
-                  <>
-                    <MainDash />
-                    <RightSide />
-                  </>
-                }
-              />
+              
+                <Route path="/" element={<MainDash />} />
                 <Route path="/orders" element={<OrdersPage />} />
                 <Route path="/accounts" element={<AccountPage />} />
                 <Route path="/subdivisions" element={<SubdivisionPage />} />

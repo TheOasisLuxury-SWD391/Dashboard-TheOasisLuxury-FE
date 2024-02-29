@@ -54,17 +54,13 @@ export const SidebarData = [
     icon: UilClipboardAlt,
     heading: 'Timeshares'
   },
-  // { 
-  //   path: '/analytics',
-  //   icon: UilChart,
-  //   heading: 'Analytics'
-  // },
 ];
 
 // Analytics Cards Data
 export const cardsData = [
   {
     title: "Sales",
+    
     color: {
       backGround: "linear-gradient(180deg, #bb67ff 0%, #c484f3 100%)",
       boxShadow: "0px 10px 20px 0px #e0c6f5",

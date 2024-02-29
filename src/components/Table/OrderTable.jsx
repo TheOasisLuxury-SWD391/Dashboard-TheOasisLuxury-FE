@@ -14,13 +14,34 @@ import {
   Box,
   Typography
 } from '@mui/material';
-
-
+import EditIcon from '@mui/icons-material/Edit';
+import EditOrderDialog from '../Popup/EditOrder';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function OrderTable() {
-
+  const makeStyle = (status) => {
+    if (status === 'SUCCESS') {
+      return {
+        background: 'rgb(145 254 159 / 47%)',
+        color: 'green',
+      };
+    } else if (status === 'CANCELLED') {
+      return {
+        background: '#ffadad8f',
+        color: 'red',
+      };
+    } else if (status === 'PENDING') {
+      return {
+        background: 'yellow',
+        color: 'black',
+      };
+    }
+  };
     const [orders, setOrders] = useState([]);
-
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [editOrder, setEditOrder] = useState(null);
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -46,20 +67,69 @@ export default function OrderTable() {
       console.error("Error fetching orders:", error);
     }
   };
+  const handleUpdate = async () => {
+    console.log('editOrder', editOrder);
+    try {
+      const token = localStorage.getItem('token');
 
+      const orderData = { ...editOrder };
+      delete orderData._id;
+      
+
+      const response = await fetch(`http://localhost:5000/api/v1/orders/${editOrder._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+      if (response.ok) {
+
+        fetchOrders();
+        console.log("Order update successfully");
+        toast.success("Order update successfully");
+      } else {
+        console.error("Failed to update Order");
+        toast.error("Failed to update Order");
+      }
+    } catch (error) {
+      console.error("Error updating Order:", error);
+      toast.error("Error updating Order:");
+    }
+    handleCloseEditDialog();
+  };
+  const handleOpenEditDialog = (order) => {
+    setEditOrder(order);
+    setOpenEditDialog(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+    setEditOrder(null);
+  };
+
+
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
 
   
 
   return (
 
-    <Container maxWidth="md" sx={{}}>
+    <Container maxWidth="md" sx={{}} className='mt-12'>
       <Typography variant="h6">Order List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2}>
 
       </Box>
      
       <div style={{ padding: '8px', width: '100%' }}>
-        <Paper sx={{ width: '140%', overflow: 'hidden' }}>
+        <Paper sx={{ width: '150%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
@@ -69,9 +139,10 @@ export default function OrderTable() {
                   <TableCell>StartDate</TableCell>
                   <TableCell>EndDate</TableCell>
                   <TableCell>Price</TableCell>
-                  <TableCell>Invoice ID</TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell align="center">Invoice ID</TableCell>
+                  <TableCell align="center">Status</TableCell>
                   <TableCell>Description</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -102,9 +173,16 @@ export default function OrderTable() {
 
                     <TableCell align="left">{order.price || 'N/A'}</TableCell>
                     <TableCell align="left">{order.invoice_id || 'N/A'}</TableCell>
-                    <TableCell align="left">{order.status || 'N/A'}</TableCell>
+                    <TableCell align="center">
+                        <span className="status" style={makeStyle(order.status || 'INACTIVE')}>{order.status || 'INACTIVE'}</span>
+                      </TableCell>
                     <TableCell align="left">{order.description || ''}</TableCell>
-                    
+                    <TableCell align="center">
+                        <div className="flex">
+                          <IconButton onClick={() => handleOpenEditDialog(order)}><EditIcon /></IconButton>
+                          
+                        </div>
+                      </TableCell>
                   
                   </TableRow>
                 ))}
@@ -114,6 +192,7 @@ export default function OrderTable() {
 
         </Paper>
       </div>
+      <ToastContainer/>
     </Container>
   );
 }
