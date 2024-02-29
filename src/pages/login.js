@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, Button, Container, Box, Typography, Checkbox, FormControlLabel, IconButton, InputAdornment, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { TextField, Button, Container, Box, Typography, Checkbox, FormControlLabel, IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { ToastContainer, toast } from 'react-toastify';
@@ -17,10 +17,9 @@ const AuthComponent = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [openForgetPasswordDialog, setOpenForgetPasswordDialog] = useState(false);
 
   useEffect(() => {
-    
+    // Load credentials from local storage on component mount
     const savedUserName = localStorage.getItem('savedUserName');
     const savedPassword = localStorage.getItem('savedPassword');
     if (savedUserName && savedPassword) {
@@ -39,19 +38,9 @@ const AuthComponent = (props) => {
     console.log("Remember Me state:", event.target.checked); // Debugging
   };
 
-  const handleForgetPasswordClick = () => {
-    setOpenForgetPasswordDialog(true);
-  };
 
-  const handleCloseForgetPasswordDialog = () => {
-    setOpenForgetPasswordDialog(false);
-  };
-  
-  
-  
   
   const handleLogin = async () => {
-     
     try {
       const response = await fetch('http://localhost:5000/api/v1/users/login/', {
         method: 'POST',
@@ -63,24 +52,22 @@ const AuthComponent = (props) => {
 
       if (response.ok) {
         const data = await response.json();
-       
+        // Set token in local storage or state
         props.setIsLoggedIn(true);
-        const accessToken = data.result.access_token; 
-        const refresh_token = data.result.refresh_token;
-        localStorage.setItem('token', accessToken); 
-        localStorage.setItem('token',refresh_token)
+        const accessToken = data.result.access_token; // Trích xuất access_token
+        localStorage.setItem('token', accessToken); // Lưu token vào localStorage
         console.log('Login successful');
         toast.success("Login successful");
         if (rememberMe) {
-         
+          // Save credentials to local storage
           localStorage.setItem('savedUserName', loginData.user_name);
           localStorage.setItem('savedPassword', loginData.password);
         } else {
-      
+          // Clear saved credentials if "Remember Me" is not checked
           localStorage.removeItem('savedUserName');
           localStorage.removeItem('savedPassword');
         }
-        
+
       } else {
         console.error('Login failed');
         toast.error("Login failed");
