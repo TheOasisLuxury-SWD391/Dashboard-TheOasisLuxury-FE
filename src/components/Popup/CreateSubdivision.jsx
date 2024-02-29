@@ -12,6 +12,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisions }) => {
   const [newSubdivision, setNewSubdivision] = useState({
@@ -46,11 +47,14 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
         const addedSubdivision = await response.json();
         setSubdivisions([...subdivisions, addedSubdivision]); 
         console.log("Subdivision added successfully");
+        toast.success("Subdivision added successfully");
       } else {
         console.error("Failed to add Subdivision");
+        toast.error("Failed to add Subdivision")
       }
     } catch (error) {
       console.error("Error adding subdivision:", error);
+      toast.success("Subdivision added successfully");
     }
     handleClose();
   };
@@ -122,8 +126,8 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
         <TextField
           margin="dense"
           id="project_id"
-          label="project_id"
-          type="string"
+          label="project id"
+          type="text"
           fullWidth
           value={newSubdivision.project_id}
           onChange={handleChange('project_id')}

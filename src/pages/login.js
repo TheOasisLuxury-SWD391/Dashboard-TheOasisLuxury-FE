@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Container, Box, Typography, Checkbox, FormControlLabel, IconButton, InputAdornment, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { ToastContainer, toast } from 'react-toastify';
 
 const AuthComponent = (props) => {
   const [loginData, setLoginData] = useState({ user_name: '', password: '' });
@@ -45,31 +46,7 @@ const AuthComponent = (props) => {
   const handleCloseForgetPasswordDialog = () => {
     setOpenForgetPasswordDialog(false);
   };
-  // const handleForgetPasswordRequest = async () => {
-  //   try {
-    
-  //     if (!email || typeof email !== 'string') {
-  //       console.error('Email không hợp lệ.');
-  //       return;
-  //     }
   
-  //     const response = await fetch('http://localhost:5000/api/v1/users/forgot-password', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ email: email }),
-  //     });
-  
-  //     if (response.ok) {
-  //       console.log('Yêu cầu đặt lại mật khẩu đã được gửi.');
-  //     } else {
-  //       console.error('Yêu cầu đặt lại mật khẩu thất bại.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Lỗi khi gửi yêu cầu đặt lại mật khẩu:', error);
-  //   }
-  // };
   
   
   
@@ -93,6 +70,7 @@ const AuthComponent = (props) => {
         localStorage.setItem('token', accessToken); 
         localStorage.setItem('token',refresh_token)
         console.log('Login successful');
+        toast.success("Login successful");
         if (rememberMe) {
          
           localStorage.setItem('savedUserName', loginData.user_name);
@@ -105,34 +83,13 @@ const AuthComponent = (props) => {
         
       } else {
         console.error('Login failed');
+        toast.error("Login failed");
       }
     } catch (error) {
       console.error('Error during login:', error);
     }
   };
 
-  const handleRegister = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registerData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-       
-        setIsLoggedIn(true);
-        console.log('Registration successful');
-      } else {
-        console.error('Registration failed');
-      }
-    } catch (error) {
-      console.error('Error during registration:', error);
-    }
-  };
 
   return (
     <Container className="flex items-center justify-center min-h-screen">
@@ -181,9 +138,7 @@ const AuthComponent = (props) => {
             }
             label="Nhớ mật khẩu"
           />
-          {/* <span style={{ cursor: 'pointer', color: 'blue', marginLeft: '50px' }} onClick={handleForgetPasswordClick}>
-            Quên mật khẩu?
-          </span> */}
+       
 
           <Button
             fullWidth
@@ -194,33 +149,9 @@ const AuthComponent = (props) => {
           >
             Đăng nhập
           </Button>
-
         </form>
       </Box>
-
-      {/* <Dialog open={openForgetPasswordDialog} onClose={handleCloseForgetPasswordDialog}>
-        <DialogTitle>Quên mật khẩu</DialogTitle>
-        <DialogContent>
-
-          <Typography>Vui lòng nhập địa chỉ email của bạn để đặt lại mật khẩu.</Typography>
-          <TextField
-            fullWidth
-            id="email"
-            label="Email"
-            margin="normal"
-            variant="outlined"
-          // onChange={(e) => setEmail(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseForgetPasswordDialog} color="primary">
-            Hủy
-          </Button>
-          <Button onClick={handleForgetPasswordRequest} color="primary">
-            Gửi yêu cầu
-          </Button>
-        </DialogActions>
-      </Dialog> */}
+      <ToastContainer/>
     </Container>
   );
 };

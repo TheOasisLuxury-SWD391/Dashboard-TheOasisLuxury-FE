@@ -66,39 +66,8 @@ const CreateTimeShareDialog = ({ open, handleClose, setTimeShares, timeshares })
           value={newTimeShare.time_share_name}
           onChange={handleChange('time_share_name')}
         />
-       <TextField
-                    margin="dense"
-                    id="insert_date"
-                    label="InsertDate"
-                    type="date"
-                    fullWidth
-                    value={newTimeShare.insert_date}
-                    onChange={handleChange('insert_date')}
-                />
-        <TextField
-                    margin="dense"
-                    id="update_date"
-                    label="UpdateDate"
-                    type="date"
-                    fullWidth
-                    value={newTimeShare.update_date}
-                    onChange={handleChange('update_date')}
-                />
+     
        
-        {/* <FormControl fullWidth margin="dense">
-          <InputLabel id="deflag-label">Deflag</InputLabel>
-          <Select
-            labelId="deflag-label"
-            id="deflag"
-            name="deflag"
-            value={newTimeShare.deflag}
-            onChange={handleChange('deflag')}
-            label="deflag"
-          >
-            <MenuItem value="true">true</MenuItem>
-            <MenuItem value="false">false</MenuItem>
-          </Select>
-        </FormControl> */}
         <TextField
           margin="dense"
           id="time_share_type"

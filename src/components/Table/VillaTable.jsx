@@ -19,7 +19,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateVillaDialog from '../Popup/CreateVilla';
 import EditVillaDialog from '../Popup/EditVilla';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export default function VillaTable() {
     const makeStyle = (status) => {
         if (status === 'ACTIVE') {
@@ -75,42 +76,71 @@ export default function VillaTable() {
             console.error("Error fetching villas:", error);
         }
     };
-
+    const handleAdd = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:5000/api/v1/villas/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(newVilla),
+            });
+    
+            if (response.ok) {
+                const addedVilla = await response.json();
+                setVillas(prevVillas => [...prevVillas, addedVilla]); 
+                console.log("Villa added successfully");
+                toast.success("Villa added successfully");
+            } else {
+                console.error("Failed to add Villa");
+                toast.error("Failed to add Villa");
+            }
+        } catch (error) {
+            console.error("Error adding villa:", error);
+            toast.error(`Error adding villa: ${error.message}`);
+        }
+        handleClose();
+    };
+    
 
     const handleDelete = async (villaId) => {
         try {
             const token = localStorage.getItem('token');
-
+    
             if (!token) {
                 console.error("Token is missing. Unable to delete villa.");
                 return;
             }
-
+    
             const response = await fetch(`http://localhost:5000/api/v1/villas/${villaId}`, {
                 method: "DELETE",
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
             });
-
+    
             if (response.ok) {
                 fetchVillas();
                 console.log("Villa deleted successfully");
+                toast.success("Villa deleted successfully");
             } else {
-
+                // Handle different scenarios for unsuccessful deletion
                 if (response.status === 401 || response.status === 403) {
                     console.error("Unauthorized: Check if the provided token is valid.");
+                    toast.error("Unauthorized: Check if the provided token is valid.");
                 } else {
-
                     const errorMessage = await response.text();
                     console.error(`Failed to delete villa. Server response: ${errorMessage}`);
+                    toast.error(`Failed to delete villa. Server response: ${errorMessage}`);
                 }
             }
         } catch (error) {
             console.error("Error deleting villa:", error.message);
+            toast.error(`Error deleting villa: ${error.message}`);
         }
     };
-
 
     const handleUpdate = async () => {
         console.log('editVilla', editVilla);
@@ -119,7 +149,7 @@ export default function VillaTable() {
 
             const villaData = { ...editVilla };
             delete villaData._id;
-             
+            
 
             const response = await fetch(`http://localhost:5000/api/v1/villas/${editVilla._id}`, {
                 method: 'PATCH',
@@ -130,14 +160,16 @@ export default function VillaTable() {
                 body: JSON.stringify(villaData),
             });
             if (response.ok) {
-
                 fetchVillas();
                 console.log("Villa update successfully");
+                toast.success("Villa updated successfully");
             } else {
                 console.error("Failed to update Villa");
+                toast.error("Failed to update Villa");
             }
         } catch (error) {
             console.error("Error updating Villa:", error);
+            toast.error(`Error updating Villa: ${error.message}`);
         }
         handleCloseEditDialog();
     };
@@ -163,30 +195,7 @@ export default function VillaTable() {
         setNewVilla({ ...newVilla, [prop]: event.target.value });
     };
 
-    const handleAdd = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/v1/villas/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify(newVilla),
-            });
-
-            if (response.ok) {
-                const addedVilla = await response.json();
-                setVillas([...villas, addedVilla]); 
-                console.log("Villa added successfully");
-            } else {
-                console.error("Failed to add Villa");
-            }
-        } catch (error) {
-            console.error("Error adding villa:", error);
-        }
-        handleClose();
-    };
+    
 
     // const handleSearchChange = (event) => {
     //   setSearchTerm(event.target.value);
@@ -216,8 +225,8 @@ export default function VillaTable() {
                 handleUpdate={handleUpdate}
             />
             <div style={{ padding: '16px', width: '100%' }}>
-                <Paper sx={{ width: '140%', overflow: 'hidden' }}>
-                <TableContainer sx={{ maxHeight: 400 }}>
+                <Paper sx={{ width: '150%', overflow: 'hidden' }}>
+                <TableContainer sx={{ maxHeight: 600 }}>
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -226,8 +235,8 @@ export default function VillaTable() {
                                     <TableCell>Insert Date</TableCell>
                                     <TableCell>Update Date</TableCell>
                                     <TableCell>Address</TableCell>
-                                    <TableCell>Area</TableCell>
-                                    <TableCell>Status</TableCell>
+                                    <TableCell align="center">Area</TableCell>
+                                    <TableCell align="center">Status</TableCell>
                                     <TableCell>Fluctuates Price</TableCell>
                                     <TableCell>Stiff Price</TableCell>
                                     <TableCell align="right">Actions</TableCell>
@@ -277,6 +286,7 @@ export default function VillaTable() {
                     </TableContainer>
                 </Paper>
             </div>
+            <ToastContainer />
         </Container>
     );
 }
