@@ -31,7 +31,15 @@ function EditAccountDialog({ editAccount, setEditAccount, openEditDialog, handle
                     value={editAccount?.user_name}
                     onChange={handleEditChange('user_name')}
                 />
-               
+                   <TextField
+                    margin="dense"
+                    id="full_name"
+                    label="Name"
+                    type="text"
+                    fullWidth
+                    value={editAccount?.full_name}
+                    onChange={handleEditChange('full_name')}
+                />
                 <TextField
                     margin="dense"
                     id="birthday"

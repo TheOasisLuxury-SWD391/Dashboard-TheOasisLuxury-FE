@@ -13,10 +13,12 @@ import {
     Select,
     MenuItem,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 const CreateAccountDialog = ({ open, handleClose, handleInputChange, setAccounts, accounts }) => {
     const [newAccount, setNewAccount] = useState({
         user_name: '',
+        full_name:'',
         role_name: '',
         birthday: '',
         phone_number: '',
@@ -44,12 +46,15 @@ const CreateAccountDialog = ({ open, handleClose, handleInputChange, setAccounts
                 const addedAccount = await response.json();
                 setAccounts([...accounts, addedAccount]); // Update the state
                 console.log("Account added successfully");
+                toast.success("Account added successfully");
             } else {
                 const errorData = await response.json();
                 console.error("Failed to add Account", errorData);
+                toast.error("Failed to add Account");
             }
         } catch (error) {
             console.error("Error adding Account:", error);
+            toast.success("Account added successfully");
         }
         handleClose();
     };
@@ -68,7 +73,15 @@ const CreateAccountDialog = ({ open, handleClose, handleInputChange, setAccounts
                     value={newAccount.user_name}
                     onChange={handleChange('user_name')}
                 />
-               
+                <TextField
+                    margin="dense"
+                    id="full_name"
+                    label="Name"
+                    type="text"
+                    fullWidth
+                    value={newAccount.full_name}
+                    onChange={handleChange('full_name')}
+                />
                <TextField
                     margin="dense"
                     id="birthday"
