@@ -119,7 +119,7 @@ export default function VillaTable() {
 
             const villaData = { ...editVilla };
             delete villaData._id;
-            debugger;
+             
 
             const response = await fetch(`http://localhost:5000/api/v1/villas/${editVilla._id}`, {
                 method: 'PATCH',

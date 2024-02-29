@@ -46,7 +46,7 @@ export default function SubdivisionTable() {
     updateDate: '',
     quantityVilla: '',
     status: '',
-    projectId: '',
+    project_id: '',
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
@@ -130,7 +130,7 @@ export default function SubdivisionTable() {
 
       const subdivisionData = { ...editSubdivision };
       delete subdivisionData._id;
-      debugger;
+       
 
       const response = await fetch(`http://localhost:5000/api/v1/subdivisions/${editSubdivision._id}`, {
         method: 'PATCH',
@@ -251,6 +251,7 @@ export default function SubdivisionTable() {
                   <TableCell>Insert Date</TableCell>
                   <TableCell>Update Date</TableCell>
                   <TableCell>Quantity</TableCell>
+                  <TableCell>ProjectID</TableCell>
                   <TableCell>Status</TableCell>
 
                   <TableCell align="center">Actions</TableCell>
@@ -284,6 +285,7 @@ export default function SubdivisionTable() {
                       </TableCell>
 
                       <TableCell align="left">{subdivision.quantityVilla || 'N/A'}</TableCell>
+                      <TableCell align="left">{subdivision.project_id || 'N/A'}</TableCell>
                       <TableCell align="left">
                         <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
                       </TableCell>

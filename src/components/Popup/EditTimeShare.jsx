@@ -39,7 +39,7 @@ function EditTimeShareDialog({ editTimeShare, setEditTimeShare, openEditDialog, 
                     margin="dense"
                     id="time_share_type"
                     label="time_share_type"
-                    type="text"
+                    type="number"
                     fullWidth
                     value={editTimeShare?.time_share_type}
                     onChange={handleEditChange('time_share_type')}

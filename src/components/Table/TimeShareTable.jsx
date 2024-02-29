@@ -116,7 +116,7 @@ export default function TimeShareTable() {
 
             const timeshareData = { ...editTimeShare };
             delete timeshareData._id;
-            debugger;
+             
 
             const response = await fetch(`http://localhost:5000/api/v1/timeshares/${editTimeShare._id}`, {
                 method: 'PATCH',

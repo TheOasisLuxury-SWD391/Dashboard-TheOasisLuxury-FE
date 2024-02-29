@@ -104,7 +104,7 @@ export default function AccountTable() {
 
       const accountData = { ...editAccount };
       delete accountData._id;
-      debugger;
+       
 
       const response = await fetch(`http://localhost:5000/api/v1/accounts/${editAccount._id}`, {
         method: 'PATCH',

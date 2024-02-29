@@ -85,7 +85,7 @@ const CreateTimeShareDialog = ({ open, handleClose, setTimeShares, timeshares })
                     onChange={handleChange('update_date')}
                 />
        
-        <FormControl fullWidth margin="dense">
+        {/* <FormControl fullWidth margin="dense">
           <InputLabel id="deflag-label">Deflag</InputLabel>
           <Select
             labelId="deflag-label"
@@ -98,7 +98,7 @@ const CreateTimeShareDialog = ({ open, handleClose, setTimeShares, timeshares })
             <MenuItem value="true">true</MenuItem>
             <MenuItem value="false">false</MenuItem>
           </Select>
-        </FormControl>
+        </FormControl> */}
         <TextField
           margin="dense"
           id="time_share_type"
