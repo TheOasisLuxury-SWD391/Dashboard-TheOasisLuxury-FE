@@ -41,9 +41,6 @@ export default function TimeShareTable() {
     const [openDialog, setOpenDialog] = useState(false);
     const [newTimeShare, setNewTimeShare] = useState({
         time_share_name: '',
-        insert_date: '',
-        update_date: '',
-        deflag: '',
         time_share_type: '',
     });
     const [editTimeShare, setEditTimeShare] = useState(null); // State cho dự án đang chỉnh sửa
@@ -228,8 +225,8 @@ export default function TimeShareTable() {
                                 <TableRow>
                                     <TableCell>No.</TableCell>
                                     <TableCell>Name</TableCell>
-                                    <TableCell>Insert Date</TableCell>
-                                    <TableCell>Update Date</TableCell>
+                                    <TableCell>StartDate</TableCell>
+                                    <TableCell>EndDate</TableCell>
                                     <TableCell>Deflag</TableCell>
                                     <TableCell align="center">Type</TableCell>
 
@@ -243,8 +240,8 @@ export default function TimeShareTable() {
                                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{timeshare.time_share_name || 'N/A'}</TableCell>
 
                                         <TableCell align="left" >
-                                            {timeshare.insert_date
-                                                ? new Date(timeshare.insert_date).toLocaleString('en-GB', {
+                                            {timeshare.start_date
+                                                ? new Date(timeshare.start_date).toLocaleString('en-GB', {
                                                     day: '2-digit',
                                                     month: '2-digit',
                                                     year: 'numeric',
@@ -252,8 +249,8 @@ export default function TimeShareTable() {
                                                 : 'N/A'}
                                         </TableCell>
                                         <TableCell align="left">
-                                            {timeshare.update_date
-                                                ? new Date(timeshare.update_date).toLocaleString('en-GB', {
+                                            {timeshare.end_date
+                                                ? new Date(timeshare.end_date).toLocaleString('en-GB', {
                                                     day: '2-digit',
                                                     month: '2-digit',
                                                     year: 'numeric',

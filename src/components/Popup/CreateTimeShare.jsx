@@ -15,9 +15,6 @@ import {
 const CreateTimeShareDialog = ({ open, handleClose, setTimeShares, timeshares }) => {
   const [newTimeShare, setNewTimeShare] = useState({
     time_share_name: '',
-    insert_date: '',
-    update_date: '',
-    deflag: '',
     time_share_type: '',
 });
 
