@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +24,34 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
     status: '',
     project_id: '',
   });
+
+  const [projects, setProjects] = useState([]);
+  
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch("http://localhost:5000/api/v1/projects/", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(Array.isArray(data.result) ? data.result : []);
+    console.log('projects',projects);
+      } else {
+        console.error("Failed to fetch projects: " + response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
 
   const handleChange = (prop) => (event) => {
     setNewSubdivision({ ...newSubdivision, [prop]: event.target.value });
@@ -123,15 +151,22 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
             <MenuItem value="INACTIVE">INACTIVE</MenuItem>
           </Select>
         </FormControl>
-        <TextField
-          margin="dense"
-          id="project_id"
-          label="project id"
-          type="text"
-          fullWidth
-          value={newSubdivision.project_id}
-          onChange={handleChange('project_id')}
-        />
+        <FormControl fullWidth margin="dense">
+          <InputLabel id="project-label">Project Name</InputLabel>
+          <Select
+            labelId="project-label"
+            id="project_id"
+            value={newSubdivision.project_id}
+            onChange={handleChange('project_id')}
+            label="Project"
+          >
+           {Array.isArray(projects) && projects.map((project, index) => (
+              <MenuItem key={project._id} value={project._id}>
+                {project.project_name} {/* Adjust according to your project object structure */}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
