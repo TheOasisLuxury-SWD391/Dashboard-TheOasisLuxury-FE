@@ -235,6 +235,7 @@ export default function VillaTable() {
                                     <TableCell>Insert Date</TableCell>
                                     <TableCell>Update Date</TableCell>
                                     <TableCell>Address</TableCell>
+                                    <TableCell>Project ID</TableCell>
                                     <TableCell align="center">Area</TableCell>
                                     <TableCell align="center">Status</TableCell>
                                     <TableCell>Fluctuates Price</TableCell>
@@ -267,6 +268,8 @@ export default function VillaTable() {
                                                 : 'N/A'}
                                         </TableCell>
                                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.address || 'N/A'}</TableCell>
+                                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.subdivision_id || 'N/A'}</TableCell>
+                                        {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.address || 'N/A'}</TableCell> */}
                                         <TableCell align="left">{villa.area || 'N/A'}</TableCell>
                                         <TableCell align="left">
                                             <span className="status" style={makeStyle(villa.status || 'INACTIVE')}>{villa.status || 'INACTIVE'}</span>

@@ -204,6 +204,38 @@ export default function SubdivisionTable() {
     handleClose();
   };
 
+  const [projects, setProjects] = useState([]);
+
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch("http://localhost:5000/api/v1/projects/", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(Array.isArray(data.result) ? data.result : []);
+        console.log('projects', projects);
+      } else {
+        console.error("Failed to fetch projects: " + response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
+
+
+
+
 
   return (
 
@@ -242,13 +274,16 @@ export default function SubdivisionTable() {
                   <TableCell align="left">Update Date</TableCell>
                   <TableCell align="left">Quantity</TableCell>
                   <TableCell align="center">Status</TableCell>
-                  <TableCell align="center">ProjectID</TableCell>
+                  <TableCell align="center">Project Name</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(subdivisions) && subdivisions
-                  .map((subdivision, index) => (
+
+                {Array.isArray(subdivisions) && subdivisions.map((subdivision, index) => {
+                  const project = projects.find(p => p._id === subdivision.project_id);
+
+                  return (
                     <TableRow key={subdivision._id}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.subdivision_name || 'N/A'}</TableCell>
@@ -276,7 +311,8 @@ export default function SubdivisionTable() {
                       <TableCell align="center">
                         <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
                       </TableCell>
-                      <TableCell align="left">{subdivision.project_id || 'N/A'}</TableCell>
+
+                      <TableCell key={project._id} value={project._id} align="left">{project.project_name}</TableCell>
                       <TableCell align="center">
                         <div className="flex">
                           <IconButton onClick={() => handleOpenEditDialog(subdivision)}><EditIcon /></IconButton>
@@ -284,7 +320,8 @@ export default function SubdivisionTable() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
