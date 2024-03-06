@@ -12,7 +12,8 @@ import {
     Tooltip,
     Container,
     Box,
-    Typography
+    Typography,
+    TextField
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -21,7 +22,8 @@ import CreateTimeShareDialog from '../Popup/CreateTimeShare';
 import EditTimeShareDialog from '../Popup/EditTimeShare';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 export default function TimeShareTable() {
     const makeStyle = (status) => {
         if (status === 'ACTIVE') {
@@ -189,15 +191,35 @@ export default function TimeShareTable() {
         }
         handleClose();
     };
+    const [searchTerm, setSearchTerm] = useState('');
+    const filteredTimeShares = timeshares.filter(timeshare =>
+        timeshare.time_share_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-    // const handleSearchChange = (event) => {
-    //   setSearchTerm(event.target.value);
-    // };
+  
     return (
 
         <Container maxWidth="md" sx={{}}>
             <Typography variant="h6">Time Share List</Typography>
             <Box display="flex" justifyContent="flex-start" mb={2} >
+            <TextField
+          label="Search"
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon style={{ color: '#707070' }} />
+              </InputAdornment>
+            ),
+            style: {
+              backgroundColor: 'white', 
+              borderRadius: '4px', 
+            },
+          }}
+          sx={{ width: '100%' }} 
+        />
                 <Tooltip title="Add New TimeShare">
                     <IconButton color="primary" onClick={handleClickOpen}>
                         <AddCircleOutlineIcon />
@@ -234,7 +256,7 @@ export default function TimeShareTable() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {Array.isArray(timeshares) && timeshares.map((timeshare, index) => (
+                            {filteredTimeShares.map((timeshare, index) => (
                                     <TableRow key={timeshare._id}>
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{timeshare.time_share_name || 'N/A'}</TableCell>

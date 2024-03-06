@@ -12,7 +12,8 @@ import {
     Tooltip,
     Container,
     Box,
-    Typography
+    Typography,
+    TextField
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -21,6 +22,8 @@ import CreateVillaDialog from '../Popup/CreateVilla';
 import EditVillaDialog from '../Popup/EditVilla';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 export default function VillaTable() {
     const makeStyle = (status) => {
         if (status === 'ACTIVE') {
@@ -40,18 +43,17 @@ export default function VillaTable() {
     const [openDialog, setOpenDialog] = useState(false);
     const [newVilla, setNewVilla] = useState({
         villa_name: '',
-        insert_date: '',
-        update_date: '',
         address: '',
         area: '',
         status: '',
         fluctuates_price: '',
         stiff_price: '',
+        subdivision_name:''
     });
     const [editVilla, setEditVilla] = useState(null); // State cho dự án đang chỉnh sửa
     const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
     // const [searchTerm, setSearchTerm] = useState('');
-
+    const [subdivisions, setSubdivisions] = useState([]);
     useEffect(() => {
         fetchVillas();
     }, []);
@@ -200,11 +202,62 @@ export default function VillaTable() {
     // const handleSearchChange = (event) => {
     //   setSearchTerm(event.target.value);
     // };
+    useEffect(() => {
+        fetchSubdivisions();
+      }, []);
+    
+      const fetchSubdivisions = async () => {
+        try {
+    
+          const token = localStorage.getItem('token'); // Lấy token từ localStorage
+    
+    
+          const response = await fetch("http://localhost:5000/api/v1/subdivisions/", {
+            headers: {
+              'Authorization': `Bearer ${token}`, // Thêm token vào header
+            },
+          });
+    
+          if (response.ok) {
+            const data = await response.json();
+            console.log('data', data);
+            setSubdivisions(Array.isArray(data.result) ? data.result : []);
+          } else {
+            console.error("Failed to fetch subdivisions" + response.status);
+          }
+        } catch (error) {
+          console.error("Error fetching subdivisions:", error);
+        }
+      };
+
+      const [searchTerm, setSearchTerm] = useState('');
+      const filteredVillas = villas.filter(villa =>
+        villa.villa_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
 
         <Container maxWidth="md" sx={{}}>
             <Typography variant="h6">Villa List</Typography>
             <Box display="flex" justifyContent="flex-start" mb={2} >
+            <TextField
+          label="Search"
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon style={{ color: '#707070' }} />
+              </InputAdornment>
+            ),
+            style: {
+              backgroundColor: 'white', 
+              borderRadius: '4px',
+            },
+          }}
+          sx={{ width: '100%' }} 
+        />
+
                 <Tooltip title="Add New Villa">
                     <IconButton color="primary" onClick={handleClickOpen}>
                         <AddCircleOutlineIcon />
@@ -235,7 +288,7 @@ export default function VillaTable() {
                                     <TableCell>Insert Date</TableCell>
                                     <TableCell>Update Date</TableCell>
                                     <TableCell>Address</TableCell>
-                                    <TableCell>Project ID</TableCell>
+                                    <TableCell>Subdivision Name</TableCell>
                                     <TableCell align="center">Area</TableCell>
                                     <TableCell align="center">Status</TableCell>
                                     <TableCell>Fluctuates Price</TableCell>
@@ -244,7 +297,9 @@ export default function VillaTable() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {Array.isArray(villas) && villas.map((villa, index) => (
+                            {filteredVillas.map((villa, index) => {
+                                      const subdivision = subdivisions.find(p => p._id === villa.subdivision_id);
+                                      return (
                                     <TableRow key={villa._id}>
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.villa_name || 'N/A'}</TableCell>
@@ -268,7 +323,7 @@ export default function VillaTable() {
                                                 : 'N/A'}
                                         </TableCell>
                                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.address || 'N/A'}</TableCell>
-                                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.subdivision_id || 'N/A'}</TableCell>
+                                        <TableCell key={subdivision?._id} value={subdivision?._id} align="left">{subdivision?.subdivision_name}</TableCell>
                                         {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.address || 'N/A'}</TableCell> */}
                                         <TableCell align="left">{villa.area || 'N/A'}</TableCell>
                                         <TableCell align="left">
@@ -283,7 +338,8 @@ export default function VillaTable() {
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                ))}
+                                      );
+                                })}
                             </TableBody>
                         </Table>
                     </TableContainer>

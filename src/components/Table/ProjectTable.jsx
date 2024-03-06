@@ -36,6 +36,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
+import SearchIcon from '@mui/icons-material/Search';
 export default function ProjectTable() {
 
   const makeStyle = (status) => {
@@ -198,12 +199,35 @@ export default function ProjectTable() {
     }
     handleClose();
   };
-
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const filteredProjects = projects.filter(project =>
+    project.project_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+    project.description.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
   return (
     <Container maxWidth="md" className="">
       {/* <h3>Project List</h3> */}
       <Typography variant="h6">Project List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2} mt={4}>
+      <TextField
+  label="Search"
+  variant="outlined"
+  value={searchKeyword}
+  onChange={(e) => setSearchKeyword(e.target.value)}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon style={{ color: '#707070' }} />
+      </InputAdornment>
+    ),
+    style: { 
+      backgroundColor: 'white', 
+      borderRadius: '4px', 
+    },
+  }}
+  sx={{ width: '100%' }} 
+/>
+
         <Tooltip title="Add New Project">
           <IconButton color="primary" onClick={handleClickOpen}>
             <AddCircleOutlineIcon />
@@ -242,7 +266,7 @@ export default function ProjectTable() {
                 </TableRow>
               </TableHead>
               <TableBody style={{ color: "white" }}>
-                {Array.isArray(projects) && projects.map((project, index) => (
+              {Array.isArray(filteredProjects) && filteredProjects.map((project, index) => (
                   <TableRow key={project._id}>
                     <TableCell>{index + 1}</TableCell>
                     {/* <TableCell component="th" scope="row">

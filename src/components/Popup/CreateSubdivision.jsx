@@ -110,7 +110,7 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
           value={newSubdivision.location}
           onChange={handleChange('location')}
         />
-       <TextField
+       {/* <TextField
                     margin="dense"
                     id="insert_date"
                     label="InsertDate"
@@ -127,7 +127,7 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
                     fullWidth
                     value={newSubdivision.update_date}
                     onChange={handleChange('update_date')}
-                />
+                /> */}
         <TextField
           margin="dense"
           id="quantityVilla"
@@ -161,8 +161,8 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
             label="Project"
           >
            {Array.isArray(projects) && projects.map((project, index) => (
-              <MenuItem key={project._id} value={project._id}>
-                {project.project_name} {/* Adjust according to your project object structure */}
+              <MenuItem key={project?._id} value={project?._id}>
+                {project?.project_name} {/* Adjust according to your project object structure */}
               </MenuItem>
             ))}
           </Select>

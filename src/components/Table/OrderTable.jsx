@@ -18,7 +18,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import EditOrderDialog from '../Popup/EditOrder';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 export default function OrderTable() {
   const makeStyle = (status) => {
     if (status === 'SUCCESS') {
@@ -36,20 +38,31 @@ export default function OrderTable() {
         background: 'yellow',
         color: 'black',
       };
+    } else if (status === 'CONFIRMED') {
+      return {
+        background: 'orange',
+        color: 'black',
+      };
+    } else if (status === 'COMPLETED') {
+      return {
+        background: 'green',
+        color: 'black',
+      };
+      
     }
   };
-    const [orders, setOrders] = useState([]);
-    const [openEditDialog, setOpenEditDialog] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [editOrder, setEditOrder] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editOrder, setEditOrder] = useState(null);
   useEffect(() => {
     fetchOrders();
   }, []);
 
   const fetchOrders = async () => {
-    
+
     try {
-      const token = localStorage.getItem('token'); 
+      const token = localStorage.getItem('token');
       const response = await fetch("http://localhost:5000/api/v1/orders/", {
         headers: {
           'Authorization': `Bearer ${token}`, // Thêm token vào header
@@ -74,7 +87,7 @@ export default function OrderTable() {
 
       const orderData = { ...editOrder };
       delete orderData._id;
-      
+
 
       const response = await fetch(`http://localhost:5000/api/v1/orders/${editOrder._id}`, {
         method: 'PATCH',
@@ -118,19 +131,60 @@ export default function OrderTable() {
     setOpenDialog(false);
   };
 
-  
 
+  // Thêm trạng thái mới để lưu trữ từ khóa tìm kiếm
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  // Thêm ô tìm kiếm vào UI
+  <Box display="flex" justifyContent="flex-end" mb={2}>
+    <TextField
+      label="Search"
+      variant="outlined"
+      value={searchKeyword}
+      onChange={(e) => setSearchKeyword(e.target.value)}
+    />
+  </Box>
+
+  // Lọc danh sách tài khoản dựa trên từ khóa tìm kiếm
+  const filteredOrders = orders.filter(order =>
+    (typeof order.order_name === 'string' && order.order_name.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+    (typeof order.price === 'string' && order.price.toLowerCase().includes(searchKeyword.toLowerCase()))
+  );
+  
   return (
 
     <Container maxWidth="md" sx={{}} className='mt-12'>
       <Typography variant="h6">Order List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          InputProps={{
+            style: {
+              backgroundColor: 'white',
+              borderRadius: '4px',
+            },
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon style={{ color: '#707070' }} />
+              </InputAdornment>
+            ),
+          }}
+          InputLabelProps={{
+            style: { color: '#707070' }
+          }}
+          fullWidth
+          size="medium"
+          style={{ marginBottom: '16px' }}
 
+        />
       </Box>
-     
+
       <div style={{ padding: '8px', width: '100%' }}>
         <Paper sx={{ width: '150%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 600 }}>
+          <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -146,7 +200,7 @@ export default function OrderTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(orders) && orders.map((order, index) => (
+                {Array.isArray(filteredOrders) && filteredOrders.map((order, index) => (
                   <TableRow key={order._id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>{order.order_name || 'N/A'}</TableCell>
@@ -174,16 +228,16 @@ export default function OrderTable() {
                     <TableCell align="left">{order.price || 'N/A'}</TableCell>
                     <TableCell align="left">{order.invoice_id || 'N/A'}</TableCell>
                     <TableCell align="center">
-                        <span className="status" style={makeStyle(order.status || 'INACTIVE')}>{order.status || 'INACTIVE'}</span>
-                      </TableCell>
+                      <span className="status" style={makeStyle(order.status || 'INACTIVE')}>{order.status || 'INACTIVE'}</span>
+                    </TableCell>
                     <TableCell align="left">{order.description || ''}</TableCell>
                     <TableCell align="center">
-                        <div className="flex">
-                          <IconButton onClick={() => handleOpenEditDialog(order)}><EditIcon /></IconButton>
-                          
-                        </div>
-                      </TableCell>
-                  
+                      <div className="flex">
+                        <IconButton onClick={() => handleOpenEditDialog(order)}><EditIcon /></IconButton>
+
+                      </div>
+                    </TableCell>
+
                   </TableRow>
                 ))}
               </TableBody>
@@ -192,7 +246,7 @@ export default function OrderTable() {
 
         </Paper>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </Container>
   );
 }

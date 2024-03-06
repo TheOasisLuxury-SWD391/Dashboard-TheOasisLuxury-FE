@@ -12,7 +12,8 @@ import {
   Tooltip,
   Container,
   Box,
-  Typography
+  Typography,
+  TextField
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -20,7 +21,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CreateSubdivisionDialog from '../Popup/CreateSubdivision';
 import EditSubdivisionDialog from '../Popup/EditSubdivision';
 import InputBase from '@mui/material/InputBase';
-
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 export default function SubdivisionTable() {
@@ -51,9 +53,6 @@ export default function SubdivisionTable() {
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
-
-
-
 
 
 
@@ -123,6 +122,28 @@ export default function SubdivisionTable() {
   };
 
 
+
+  const handleOpenEditDialog = (subdivion) => {
+    setEditSubdivision(subdivion);
+    setOpenEditDialog(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+    setEditSubdivision(null);
+  };
+
+
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
+  const handleChange = (prop) => (event) => {
+    setNewSubdivision({ ...newSubdivision, [prop]: event.target.value });
+  };
   const handleUpdate = async () => {
     console.log('editSubdivision', editSubdivision);
     try {
@@ -154,28 +175,6 @@ export default function SubdivisionTable() {
     }
     handleCloseEditDialog();
   };
-  const handleOpenEditDialog = (subdivion) => {
-    setEditSubdivision(subdivion);
-    setOpenEditDialog(true);
-  };
-
-  const handleCloseEditDialog = () => {
-    setOpenEditDialog(false);
-    setEditSubdivision(null);
-  };
-
-
-  const handleClickOpen = () => {
-    setOpenDialog(true);
-  };
-
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
-  const handleChange = (prop) => (event) => {
-    setNewSubdivision({ ...newSubdivision, [prop]: event.target.value });
-  };
-
   const handleAdd = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -231,7 +230,10 @@ export default function SubdivisionTable() {
       console.error("Error fetching projects:", error);
     }
   };
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const filteredSubdivisions = subdivisions.filter(subdivision =>
+    subdivision.subdivision_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
 
 
@@ -242,6 +244,24 @@ export default function SubdivisionTable() {
     <Container maxWidth="md" sx={{}}>
       <Typography variant="h6">Subdivision List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2} >
+        <TextField
+          label="Search"
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon style={{ color: '#707070' }} />
+              </InputAdornment>
+            ),
+            style: {
+              backgroundColor: 'white', 
+              borderRadius: '4px', 
+            },
+          }}
+          sx={{ width: '100%' }} 
+        />
         <Tooltip title="Add New Subdivision">
           <IconButton color="primary" onClick={handleClickOpen}>
             <AddCircleOutlineIcon />
@@ -280,7 +300,7 @@ export default function SubdivisionTable() {
               </TableHead>
               <TableBody>
 
-                {Array.isArray(subdivisions) && subdivisions.map((subdivision, index) => {
+                {filteredSubdivisions.map((subdivision, index) => {
                   const project = projects.find(p => p._id === subdivision.project_id);
 
                   return (
@@ -312,7 +332,7 @@ export default function SubdivisionTable() {
                         <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
                       </TableCell>
 
-                      <TableCell key={project._id} value={project._id} align="left">{project.project_name}</TableCell>
+                      <TableCell key={project?._id} value={project?._id} align="left">{project?.project_name}</TableCell>
                       <TableCell align="center">
                         <div className="flex">
                           <IconButton onClick={() => handleOpenEditDialog(subdivision)}><EditIcon /></IconButton>

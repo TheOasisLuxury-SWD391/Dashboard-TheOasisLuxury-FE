@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -15,19 +15,18 @@ import {
 const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
     const [newVilla, setNewVilla] = useState({
         villa_name: '',
-        insert_date: '',
-        update_date: '',
         address: '',
         area: '',
         status: '',
         fluctuates_price: '',
         stiff_price: '',
+        subdivision_name:''
     });
 
     const handleChange = (prop) => (event) => {
         setNewVilla({ ...newVilla, [prop]: event.target.value });
     };
-
+    const [subdivisions, setSubdivisions] = useState([]);
     const handleAdd = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -52,7 +51,33 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
         }
         handleClose();
     };
-
+    useEffect(() => {
+        fetchSubdivisions();
+      }, []);
+    
+      const fetchSubdivisions = async () => {
+        try {
+    
+          const token = localStorage.getItem('token'); // Lấy token từ localStorage
+    
+    
+          const response = await fetch("http://localhost:5000/api/v1/subdivisions/", {
+            headers: {
+              'Authorization': `Bearer ${token}`, // Thêm token vào header
+            },
+          });
+    
+          if (response.ok) {
+            const data = await response.json();
+            console.log('data', data);
+            setSubdivisions(Array.isArray(data.result) ? data.result : []);
+          } else {
+            console.error("Failed to fetch subdivisions" + response.status);
+          }
+        } catch (error) {
+          console.error("Error fetching subdivisions:", error);
+        }
+      };
     return (
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Add New Villa</DialogTitle>
@@ -68,7 +93,7 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                     onChange={handleChange('villa_name')}
                 />
 
-                <TextField
+                {/* <TextField
                     margin="dense"
                     id="insert_date"
                     label="InsertDate"
@@ -85,7 +110,7 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                     fullWidth
                     value={newVilla.update_date}
                     onChange={handleChange('update_date')}
-                />
+                /> */}
                 <TextField
                     margin="dense"
                     id="address"
@@ -95,6 +120,22 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                     value={newVilla.address}
                     onChange={handleChange('address')}
                 />
+                <FormControl fullWidth margin="dense">
+          <InputLabel id="subdivision-label">Subdivision Name</InputLabel>
+          <Select
+            labelId="subdivision-label"
+            id="subdivision_id"
+            value={newVilla.subdivision_id}
+            onChange={handleChange('subdivision_id')}
+            label="Subdivision"
+          >
+           {Array.isArray(subdivisions) && subdivisions.map((subdivision, index) => (
+              <MenuItem key={subdivision?._id} value={subdivision?._id}>
+                {subdivision?.subdivision_name} {/* Adjust according to your project object structure */}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
                 <TextField
                     margin="dense"
                     id="area"
