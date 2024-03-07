@@ -49,7 +49,7 @@ export default function SubdivisionTable() {
     updateDate: '',
     quantityVilla: '',
     status: '',
-    project_id: '',
+    
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
@@ -327,7 +327,7 @@ export default function SubdivisionTable() {
                           : 'N/A'}
                       </TableCell>
 
-                      <TableCell align="left">{subdivision.quantityVilla || 'N/A'}</TableCell>
+                      <TableCell align="left">{subdivision.quantityVilla || '0'}</TableCell>
                       <TableCell align="center">
                         <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
                       </TableCell>

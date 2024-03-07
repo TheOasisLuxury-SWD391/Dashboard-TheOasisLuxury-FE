@@ -15,7 +15,14 @@ import {
 function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseEditDialog, handleUpdate }) {
     const [subdivisions, setSubdivisions] = useState([]);
     const handleEditChange = (prop) => (event) => {
-        setEditVilla({ ...editVilla, [prop]: event.target.value });
+        let value = event.target.value;
+
+        // Convert value to number if the property is 'fluctuates_price' or 'stiff_price'
+        if (prop === 'fluctuates_price' || prop === 'stiff_price') {
+            value = parseFloat(value);
+        }
+        setEditVilla({ ...editVilla, [prop]: value });
+
     };
     useEffect(() => {
         fetchSubdivisions();
@@ -126,7 +133,7 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
                     label="Stiff Price"
                     type="number"
                     fullWidth
-                    value={editVilla?.stiff_price}
+                    value={editVilla?.stiff_price }
                     onChange={handleEditChange('stiff_price')}
                 />
             </DialogContent>

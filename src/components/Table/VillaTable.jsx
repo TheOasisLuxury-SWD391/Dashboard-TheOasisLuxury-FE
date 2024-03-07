@@ -329,8 +329,8 @@ export default function VillaTable() {
                                         <TableCell align="left">
                                             <span className="status" style={makeStyle(villa.status || 'INACTIVE')}>{villa.status || 'INACTIVE'}</span>
                                         </TableCell>
-                                        <TableCell align="left">{villa.fluctuates_price || 'N/A'}</TableCell>
-                                        <TableCell align="left">{villa.stiff_price || 'N/A'}</TableCell>
+                                        <TableCell align="left">{villa.fluctuates_price || '0'}</TableCell>
+                                        <TableCell align="left">{villa.stiff_price || '0'}</TableCell>
                                         <TableCell align="center">
                                             <div className="flex">
                                                 <IconButton onClick={() => handleOpenEditDialog(villa)}><EditIcon /></IconButton>
