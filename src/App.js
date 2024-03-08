@@ -18,13 +18,14 @@ import AuthComponent from './pages/login';
 import AccountPage from './pages/customer';
 import VillaPage from './pages/villa';
 import TimeSharePage from './pages/timeshare';
+import logoImage from './images/the oasis luxury (2).png';
 
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Add this state for authentication
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'false';
     setIsLoggedIn(loggedIn);
   }, []);
 
@@ -36,7 +37,11 @@ function App() {
             <>
               <Sidebar />
               <div className="Header absolute top-10 right-0 flex items-center p-4 mr-20 text-white">
+              <img src={logoImage} alt="Logo" style={{ height: '80px', width: 'auto', marginRight: '1200px' }} />
+
                 <div className="mr-4">
+                
+
                   <p className="text-lg font-bold text-blue-300">Hello, ADMIN!</p> 
                 </div>
                 <div className="rounded-full h-10 w-10 bg-gray-500 mr-4"></div>

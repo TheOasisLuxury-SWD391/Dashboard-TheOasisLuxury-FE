@@ -18,8 +18,8 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
         address: '',
         area: '',
         status: '',
-        fluctuates_price: '',
-        stiff_price: '',
+        fluctuates_price: 0,
+        stiff_price: 0,
         subdivision_name:''
     });
 
@@ -131,7 +131,7 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
           >
            {Array.isArray(subdivisions) && subdivisions.map((subdivision, index) => (
               <MenuItem key={subdivision?._id} value={subdivision?._id}>
-                {subdivision?.subdivision_name} {/* Adjust according to your project object structure */}
+                {subdivision?.subdivision_name} 
               </MenuItem>
             ))}
           </Select>

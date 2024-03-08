@@ -14,8 +14,7 @@ import {
   Box,
   Typography
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import EditOrderDialog from '../Popup/EditOrder';
+
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TextField from '@mui/material/TextField';
@@ -52,9 +51,8 @@ export default function OrderTable() {
     }
   };
   const [orders, setOrders] = useState([]);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [editOrder, setEditOrder] = useState(null);
+ 
+
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -80,62 +78,8 @@ export default function OrderTable() {
       console.error("Error fetching orders:", error);
     }
   };
-  const handleUpdate = async () => {
-    console.log('editOrder', editOrder);
-    try {
-      const token = localStorage.getItem('token');
 
-      const orderData = { ...editOrder };
-      delete orderData._id;
-
-
-      const response = await fetch(`http://localhost:5000/api/v1/orders/${editOrder._id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(orderData),
-      });
-      if (response.ok) {
-
-        fetchOrders();
-        console.log("Order update successfully");
-        toast.success("Order update successfully");
-      } else {
-        console.error("Failed to update Order");
-        toast.error("Failed to update Order");
-      }
-    } catch (error) {
-      console.error("Error updating Order:", error);
-      toast.error("Error updating Order:");
-    }
-    handleCloseEditDialog();
-  };
-  const handleOpenEditDialog = (order) => {
-    setEditOrder(order);
-    setOpenEditDialog(true);
-  };
-
-  const handleCloseEditDialog = () => {
-    setOpenEditDialog(false);
-    setEditOrder(null);
-  };
-
-
-  const handleClickOpen = () => {
-    setOpenDialog(true);
-  };
-
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
-
-
-  // Thêm trạng thái mới để lưu trữ từ khóa tìm kiếm
   const [searchKeyword, setSearchKeyword] = useState('');
-
-  // Thêm ô tìm kiếm vào UI
   <Box display="flex" justifyContent="flex-end" mb={2}>
     <TextField
       label="Search"
@@ -145,7 +89,6 @@ export default function OrderTable() {
     />
   </Box>
 
-  // Lọc danh sách tài khoản dựa trên từ khóa tìm kiếm
   const filteredOrders = orders.filter(order =>
     (typeof order.order_name === 'string' && order.order_name.toLowerCase().includes(searchKeyword.toLowerCase())) ||
     (typeof order.price === 'string' && order.price.toLowerCase().includes(searchKeyword.toLowerCase()))
@@ -153,7 +96,7 @@ export default function OrderTable() {
   
   return (
 
-    <Container maxWidth="md" sx={{}} className='mt-12'>
+    <Container maxWidth="md" sx={{}} className=''>
       <Typography variant="h6">Order List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2}>
         <TextField
@@ -196,7 +139,7 @@ export default function OrderTable() {
                   <TableCell align="center">Invoice ID</TableCell>
                   <TableCell align="center">Status</TableCell>
                   <TableCell>Description</TableCell>
-                  <TableCell align="center">Actions</TableCell>
+                  
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -231,12 +174,7 @@ export default function OrderTable() {
                       <span className="status" style={makeStyle(order.status || 'INACTIVE')}>{order.status || 'INACTIVE'}</span>
                     </TableCell>
                     <TableCell align="left">{order.description || ''}</TableCell>
-                    <TableCell align="center">
-                      <div className="flex">
-                        <IconButton onClick={() => handleOpenEditDialog(order)}><EditIcon /></IconButton>
-
-                      </div>
-                    </TableCell>
+                   
 
                   </TableRow>
                 ))}

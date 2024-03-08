@@ -208,7 +208,7 @@ export default function ProjectTable() {
     <Container maxWidth="md" className="">
       {/* <h3>Project List</h3> */}
       <Typography variant="h6">Project List</Typography>
-      <Box display="flex" justifyContent="flex-start" mb={2} mt={4}>
+      <Box display="flex" justifyContent="flex-start" mb={2} >
       <TextField
   label="Search"
   variant="outlined"

@@ -20,9 +20,9 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
     location: '',
     insert_date: '',
     update_date: '',
-    quantityVilla: '',
+    quantityVilla: 0,
     status: '',
-    project_id: '',
+   
   });
 
   const [projects, setProjects] = useState([]);
