@@ -43,7 +43,7 @@ export default function TimeShareTable() {
     const [openDialog, setOpenDialog] = useState(false);
     const [newTimeShare, setNewTimeShare] = useState({
         time_share_name: '',
-        time_share_type: '',
+        time_share_type: 0,
     });
     const [editTimeShare, setEditTimeShare] = useState(null); // State cho dự án đang chỉnh sửa
     const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
@@ -283,7 +283,7 @@ export default function TimeShareTable() {
                                         <TableCell align="left">
                                             <span className="deflag" style={makeStyle(timeshare.deflag || 'FALSE')}>{timeshare.deflag || 'FALSE'}</span>
                                         </TableCell>
-                                        <TableCell align="center">{timeshare.time_share_type || 'N/A'}</TableCell>
+                                        <TableCell align="center">{timeshare.time_share_type || '0'}</TableCell>
 
                                         <TableCell align="center">
                                             <div className="flex">

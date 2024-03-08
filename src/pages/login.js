@@ -49,13 +49,16 @@ const AuthComponent = (props) => {
         },
         body: JSON.stringify(loginData),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
-        // Set token in local storage or state
+        // Set token and user_id in local storage
         props.setIsLoggedIn(true);
-        const accessToken = data.result.access_token; // Trích xuất access_token
-        localStorage.setItem('token', accessToken); // Lưu token vào localStorage
+        const accessToken = data.result.access_token;
+        const user_id = data.result.user_id;
+        localStorage.removeItem('user_id',user_id)
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('user_id', user_id);
         console.log('Login successful');
         toast.success("Login successful");
         if (rememberMe) {
@@ -67,7 +70,6 @@ const AuthComponent = (props) => {
           localStorage.removeItem('savedUserName');
           localStorage.removeItem('savedPassword');
         }
-
       } else {
         console.error('Login failed');
         toast.error("Login failed");
@@ -76,6 +78,7 @@ const AuthComponent = (props) => {
       console.error('Error during login:', error);
     }
   };
+  
 
 
   return (

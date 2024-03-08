@@ -6,7 +6,7 @@ import { SidebarData } from "../Data/Data";
 import { UilBars } from "@iconscout/react-unicons";
 import { motion } from "framer-motion";
 import { NavLink } from 'react-router-dom';
-const Sidebar = () => {
+const Sidebar = ({role}) => {
   const [selected, setSelected] = useState(0);
 
   const [expanded, setExpaned] = useState(true)
@@ -21,7 +21,13 @@ const Sidebar = () => {
   }
   
   console.log(window.innerWidth)
+  const filteredSidebarData = SidebarData.filter(item => {
   
+    if (item.roles && item.roles.includes(role)) {
+      return true;
+    }
+    return false;
+  });
   return (
     <>
       <div className="bars" style={expanded?{left: '60%'}:{left: '5%'}} onClick={()=>setExpaned(!expanded)}>
@@ -40,7 +46,7 @@ const Sidebar = () => {
       </div> */}
 
 <div className="menu">
-        {SidebarData.map((item, index) => (
+        {filteredSidebarData.map((item, index) => (
          <NavLink
          to={item.path}
          key={index}
