@@ -22,7 +22,9 @@ import EditAccountDialog from '../Popup/EditAccount';
 
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
-
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 export default function AccountTable() {
 
   const [accounts, setAccounts] = useState([]);
@@ -182,12 +184,55 @@ export default function AccountTable() {
     }
     handleClose();
   };
+// Thêm trạng thái mới để lưu trữ từ khóa tìm kiếm
+const [searchKeyword, setSearchKeyword] = useState('');
+
+// Thêm ô tìm kiếm vào UI
+<Box display="flex" justifyContent="flex-end" mb={2}>
+  <TextField
+    label="Search"
+    variant="outlined"
+    value={searchKeyword}
+    onChange={(e) => setSearchKeyword(e.target.value)}
+  />
+</Box>
+
+// Lọc danh sách tài khoản dựa trên từ khóa tìm kiếm
+const filteredAccounts = accounts.filter(account =>
+  account.full_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+  account.email.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+  account.user_name.toLowerCase().includes(searchKeyword.toLowerCase())
+);
 
   return (
 
     <Container maxWidth="md" sx={{}}>
       <Typography variant="h6">Account List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2}>
+      <TextField
+  label="Search"
+  variant="outlined"
+  value={searchKeyword}
+  onChange={(e) => setSearchKeyword(e.target.value)}
+  InputProps={{
+    style: { 
+      backgroundColor: 'white', 
+      borderRadius: '4px', 
+    },
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon style={{ color: '#707070' }} /> 
+      </InputAdornment>
+    ),
+  }}
+  InputLabelProps={{ 
+    style: { color: '#707070' } 
+  }}
+  fullWidth
+  size="medium"
+  style={{ marginBottom: '16px' }} 
+/>
+
         <Tooltip title="Add New Account">
           <IconButton color="primary" onClick={handleClickOpen}>
             <AddCircleOutlineIcon />
@@ -224,7 +269,7 @@ export default function AccountTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(accounts) && accounts.map((account, index) => (
+              {Array.isArray(filteredAccounts) && filteredAccounts.map((account, index) => (
                   <TableRow key={account._id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>{account.full_name || 'N/A'}</TableCell>
@@ -257,7 +302,6 @@ export default function AccountTable() {
               </TableBody>
             </Table>
           </TableContainer>
-
         </Paper>
       </div>
       <ToastContainer/>
