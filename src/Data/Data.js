@@ -23,36 +23,49 @@ export const SidebarData = [
     path: '/',
     icon: UilEstate,
     heading: "Dashboard",
+    roles: ['ADMIN', 'STAFF'],
   },
   { 
     path: '/orders',
     icon: UilClipboardAlt,
     heading: "Orders",
+    roles: ['ADMIN'],
   },
   { 
     path: '/accounts',
     icon: UilUsersAlt,
     heading: "Accounts",
+    roles: ['ADMIN'],
   },
   { 
     path: '/projects',
     icon: UilPackage,
-    heading: 'Projects'
+    heading: 'Projects',
+    roles: ['STAFF'],
   },
   { 
     path: '/subdivisions',
     icon: UilPackage,
-    heading: 'Subdivisions'
+    heading: 'Subdivisions',
+    roles: ['STAFF'],
   },
   { 
     path: '/villas',
     icon: UilClipboardAlt,
-    heading: 'Villas'
+    heading: 'Villas',
+    roles: ['STAFF'],
   },
   { 
     path: '/timeshares',
     icon: UilClipboardAlt,
-    heading: 'Timeshares'
+    heading: 'Timeshares',
+    roles: ['STAFF'],
+  },
+  { 
+    path: '/contracts',
+    icon: UilClipboardAlt,
+    heading: 'Contracts',
+    roles: ['ADMIN'],
   },
 ];
 
