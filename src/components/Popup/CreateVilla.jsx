@@ -23,7 +23,9 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
         subdivision_name:'',
         start_date: '',
         end_date: '',
+        url_image: [], // Thêm trường mới
     });
+    
 
     const handleChange = (prop) => (event) => {
         setNewVilla({ ...newVilla, [prop]: event.target.value });
@@ -40,10 +42,12 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                 },
                 body: JSON.stringify(newVilla),
             });
-
+    
             if (response.ok) {
                 const addedVilla = await response.json();
-                setVillas([...villas, addedVilla]); 
+                // Thêm dữ liệu hình ảnh vào villa mới
+                addedVilla.url_image = newVilla.url_image;
+                setVillas([...villas, addedVilla]);
                 console.log("Villa added successfully");
             } else {
                 console.error("Failed to add Villa");
@@ -53,6 +57,7 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
         }
         handleClose();
     };
+    
     useEffect(() => {
         fetchSubdivisions();
       }, []);
@@ -179,6 +184,16 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                     value={newVilla.stiff_price}
                     onChange={handleChange('stiff_price')}
                 />
+                <TextField
+    margin="dense"
+    id="url_image"
+    label="URL Image"
+    type="text"
+    fullWidth
+    value={newVilla.url_image}
+    onChange={handleChange('url_image')}
+/>
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary">

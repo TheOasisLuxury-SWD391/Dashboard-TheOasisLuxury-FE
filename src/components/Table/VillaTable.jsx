@@ -48,10 +48,14 @@ export default function VillaTable() {
         address: '',
         area: '',
         status: '',
-        fluctuates_price: '',
-        stiff_price: '',
-        subdivision_name: ''
+        fluctuates_price: 0,
+        stiff_price: 0,
+        subdivision_name:'',
+        start_date: '',
+        end_date: '',
+        url_image: [], // Thêm trường mới
     });
+    
     const [editVilla, setEditVilla] = useState(null); // State cho dự án đang chỉnh sửa
     const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
     // const [searchTerm, setSearchTerm] = useState('');
@@ -125,6 +129,7 @@ export default function VillaTable() {
 
             if (response.ok) {
                 const addedVilla = await response.json();
+                addedVilla.url_image = newVilla.url_image;
                 setVillas(prevVillas => [...prevVillas, addedVilla]);
                 console.log("Villa added successfully");
                 toast.success("Villa added successfully");
@@ -397,7 +402,7 @@ export default function VillaTable() {
                                     <TableCell>Stiff Price</TableCell>
                                     <TableCell>Insert Date</TableCell>
                                     <TableCell>Update Date</TableCell>
-                                    {/* <TableCell align="right">Chọn khoảng Timeshare</TableCell> */}
+                                    <TableCell align="center">Image</TableCell>
                                     <TableCell align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -470,6 +475,7 @@ export default function VillaTable() {
                                                     })
                                                     : 'N/A'}
                                             </TableCell>
+                                            <TableCell align="left">{villa.url_image}</TableCell>
                                             <TableCell align="center">
                                                 <div className="flex">
                                                     <IconButton onClick={() => handleOpenEditDialog(villa)}><EditIcon /></IconButton>

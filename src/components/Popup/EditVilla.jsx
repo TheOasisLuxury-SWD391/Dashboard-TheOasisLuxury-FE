@@ -150,6 +150,16 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
                     value={editVilla?.stiff_price}
                     onChange={handleEditChange('stiff_price')}
                 />
+                 <TextField
+                    margin="dense"
+                    id="url_image"
+                    label="Image"
+                    type="text"
+                    fullWidth
+                    value={editVilla?.url_image}
+                    onChange={handleEditChange('url_image')}
+                    size="small"
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCloseEditDialog}>Cancel</Button>
