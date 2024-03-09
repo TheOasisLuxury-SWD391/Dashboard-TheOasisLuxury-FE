@@ -20,7 +20,9 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
         status: '',
         fluctuates_price: 0,
         stiff_price: 0,
-        subdivision_name:''
+        subdivision_name:'',
+        start_date: '',
+        end_date: '',
     });
 
     const handleChange = (prop) => (event) => {
@@ -93,24 +95,24 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                     onChange={handleChange('villa_name')}
                 />
 
-                {/* <TextField
+                <TextField
                     margin="dense"
-                    id="insert_date"
-                    label="InsertDate"
+                    id="start_date"
+                    label="StartDate"
                     type="date"
                     fullWidth
-                    value={newVilla.insert_date}
-                    onChange={handleChange('insert_date')}
+                    value={newVilla.start_date}
+                    onChange={handleChange('start_date')}
                 />
                 <TextField
                     margin="dense"
-                    id="update_date"
-                    label="UpdateDate"
+                    id="end_date"
+                    label="EndDate"
                     type="date"
                     fullWidth
-                    value={newVilla.update_date}
-                    onChange={handleChange('update_date')}
-                /> */}
+                    value={newVilla.end_date}
+                    onChange={handleChange('end_date')}
+                />
                 <TextField
                     margin="dense"
                     id="address"

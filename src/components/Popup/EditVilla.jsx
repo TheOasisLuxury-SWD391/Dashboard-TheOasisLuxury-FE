@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -14,6 +14,8 @@ import {
 
 function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseEditDialog, handleUpdate }) {
     const [subdivisions, setSubdivisions] = useState([]);
+
+
     const handleEditChange = (prop) => (event) => {
         let value = event.target.value;
 
@@ -24,33 +26,36 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
         setEditVilla({ ...editVilla, [prop]: value });
 
     };
+
+
     useEffect(() => {
         fetchSubdivisions();
-      }, []);
-    
-      const fetchSubdivisions = async () => {
+    }, []);
+
+    const fetchSubdivisions = async () => {
         try {
-    
-          const token = localStorage.getItem('token'); // Lấy token từ localStorage
-    
-    
-          const response = await fetch("http://localhost:5000/api/v1/subdivisions/", {
-            headers: {
-              'Authorization': `Bearer ${token}`, // Thêm token vào header
-            },
-          });
-    
-          if (response.ok) {
-            const data = await response.json();
-            console.log('data', data);
-            setSubdivisions(Array.isArray(data.result) ? data.result : []);
-          } else {
-            console.error("Failed to fetch subdivisions" + response.status);
-          }
+
+            const token = localStorage.getItem('token'); // Lấy token từ localStorage
+
+
+            const response = await fetch("http://localhost:5000/api/v1/subdivisions/", {
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Thêm token vào header
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('data', data);
+                setSubdivisions(Array.isArray(data.result) ? data.result : []);
+            } else {
+                console.error("Failed to fetch subdivisions" + response.status);
+            }
         } catch (error) {
-          console.error("Error fetching subdivisions:", error);
+            console.error("Error fetching subdivisions:", error);
         }
-      };
+    };
+
     return (
         <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
             <DialogTitle>Edit Villa</DialogTitle>
@@ -66,8 +71,33 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
                     onChange={handleEditChange('villa_name')}
                     size="small"
                 />
+                <TextField
+                    margin="dense"
+                    id="start_date"
+                    label="Start Date"
+                    type="date"
+                    fullWidth
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    value={editVilla?.start_date || ''}
+                    onChange={handleEditChange('start_date')}
+                />
 
-                
+                <TextField
+                    margin="dense"
+                    id="end_date"
+                    label="End Date"
+                    type="date"
+                    fullWidth
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    value={editVilla?.end_date || ''}
+                    onChange={handleEditChange('end_date')}
+                />
+
+
                 <TextField
                     margin="dense"
                     id="address"
@@ -101,22 +131,6 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
                         <MenuItem value="INACTIVE">INACTIVE</MenuItem>
                     </Select>
                 </FormControl>
-                {/* <FormControl fullWidth margin="dense">
-    <InputLabel id="subdivision-label">Subdivision Name</InputLabel>
-    <Select
-        labelId="subdivision-label"
-        id="subdivision_id"
-        value={editVilla?.subdivision_id}
-        onChange={handleEditChange('subdivision_id')}
-        label="Subdivision"
-    >
-        {Array.isArray(subdivisions) && subdivisions.map((subdivision, index) => (
-            <MenuItem key={subdivision?._id} value={subdivision?._id}>
-                {subdivision?.subdivision_name} 
-            </MenuItem>
-        ))}
-    </Select>
-</FormControl> */}
 
                 <TextField
                     margin="dense"
@@ -133,7 +147,7 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
                     label="Stiff Price"
                     type="number"
                     fullWidth
-                    value={editVilla?.stiff_price }
+                    value={editVilla?.stiff_price}
                     onChange={handleEditChange('stiff_price')}
                 />
             </DialogContent>
