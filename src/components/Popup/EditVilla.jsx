@@ -56,6 +56,23 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
         }
     };
 
+    const handleEditImageChange = (index) => (event) => {
+        const newImages = [...editVilla.url_image];
+        newImages[index] = event.target.value;
+        setEditVilla({ ...editVilla, url_image: newImages });
+    };
+
+    const handleAddImageField = () => {
+        const newImages = [...editVilla.url_image, ''];
+        setEditVilla({ ...editVilla, url_image: newImages });
+    };
+
+    const handleRemoveImageField = (index) => {
+        const newImages = [...editVilla.url_image];
+        newImages.splice(index, 1);
+        setEditVilla({ ...editVilla, url_image: newImages });
+    };
+
     return (
         <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
             <DialogTitle>Edit Villa</DialogTitle>
@@ -150,16 +167,20 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
                     value={editVilla?.stiff_price}
                     onChange={handleEditChange('stiff_price')}
                 />
-                 <TextField
-                    margin="dense"
-                    id="url_image"
-                    label="Image"
-                    type="text"
-                    fullWidth
-                    value={editVilla?.url_image}
-                    onChange={handleEditChange('url_image')}
-                    size="small"
-                />
+                {editVilla?.url_image.map((url, index) => (
+                    <div key={index}>
+                        <TextField
+                            margin="dense"
+                            label={`Image URL ${index + 1}`}
+                            type="text"
+                            fullWidth
+                            value={url}
+                            onChange={handleEditImageChange(index)}
+                        />
+                        <Button onClick={() => handleRemoveImageField(index)}>Remove</Button>
+                    </div>
+                ))}
+                <Button onClick={handleAddImageField}>Add Image URL</Button>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCloseEditDialog}>Cancel</Button>
