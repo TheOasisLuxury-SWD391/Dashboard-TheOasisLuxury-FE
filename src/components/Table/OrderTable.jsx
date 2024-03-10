@@ -12,7 +12,8 @@ import {
   Tooltip,
   Container,
   Box,
-  Typography
+  Typography,
+  Button
 } from '@mui/material';
 
 import { toast, ToastContainer } from 'react-toastify';
@@ -139,6 +140,7 @@ export default function OrderTable() {
                   <TableCell align="center">Invoice ID</TableCell>
                   <TableCell align="center">Status</TableCell>
                   <TableCell>Description</TableCell>
+                  <TableCell>Action</TableCell>
                   
                 </TableRow>
               </TableHead>
@@ -174,6 +176,7 @@ export default function OrderTable() {
                       <span className="status" style={makeStyle(order.status || 'INACTIVE')}>{order.status || 'INACTIVE'}</span>
                     </TableCell>
                     <TableCell align="left">{order.description || ''}</TableCell>
+                    <TableCell align="left"><Button>ĐÃ THANH TOÁN</Button></TableCell>
                    
 
                   </TableRow>

@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -20,12 +20,12 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
         status: '',
         fluctuates_price: 0,
         stiff_price: 0,
-        subdivision_name:'',
+        subdivision_name: '',
         start_date: '',
         end_date: '',
-        url_image: [], // Thêm trường mới
+        url_image: [''], // Thêm trường mới
     });
-    
+
 
     const handleChange = (prop) => (event) => {
         setNewVilla({ ...newVilla, [prop]: event.target.value });
@@ -42,7 +42,7 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                 },
                 body: JSON.stringify(newVilla),
             });
-    
+
             if (response.ok) {
                 const addedVilla = await response.json();
                 // Thêm dữ liệu hình ảnh vào villa mới
@@ -57,34 +57,51 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
         }
         handleClose();
     };
-    
+
     useEffect(() => {
         fetchSubdivisions();
-      }, []);
-    
-      const fetchSubdivisions = async () => {
+    }, []);
+
+    const fetchSubdivisions = async () => {
         try {
-    
-          const token = localStorage.getItem('token'); // Lấy token từ localStorage
-    
-    
-          const response = await fetch("http://localhost:5000/api/v1/subdivisions/", {
-            headers: {
-              'Authorization': `Bearer ${token}`, // Thêm token vào header
-            },
-          });
-    
-          if (response.ok) {
-            const data = await response.json();
-            console.log('data', data);
-            setSubdivisions(Array.isArray(data.result) ? data.result : []);
-          } else {
-            console.error("Failed to fetch subdivisions" + response.status);
-          }
+
+            const token = localStorage.getItem('token'); // Lấy token từ localStorage
+
+
+            const response = await fetch("http://localhost:5000/api/v1/subdivisions/", {
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Thêm token vào header
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('data', data);
+                setSubdivisions(Array.isArray(data.result) ? data.result : []);
+            } else {
+                console.error("Failed to fetch subdivisions" + response.status);
+            }
         } catch (error) {
-          console.error("Error fetching subdivisions:", error);
+            console.error("Error fetching subdivisions:", error);
         }
-      };
+    };
+
+    const handleImageUrlChange = (index) => (event) => {
+        const newUrls = [...newVilla.url_image];
+        newUrls[index] = event.target.value;
+        setNewVilla({ ...newVilla, url_image: newUrls });
+    };
+
+    const handleAddImageUrl = () => {
+        setNewVilla({ ...newVilla, url_image: [...newVilla.url_image, ''] });
+    };
+
+    const handleRemoveImageUrl = (index) => {
+        const newUrls = [...newVilla.url_image];
+        newUrls.splice(index, 1);
+        setNewVilla({ ...newVilla, url_image: newUrls });
+    };
+
     return (
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Add New Villa</DialogTitle>
@@ -128,21 +145,21 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                     onChange={handleChange('address')}
                 />
                 <FormControl fullWidth margin="dense">
-          <InputLabel id="subdivision-label">Subdivision Name</InputLabel>
-          <Select
-            labelId="subdivision-label"
-            id="subdivision_id"
-            value={newVilla.subdivision_id}
-            onChange={handleChange('subdivision_id')}
-            label="Subdivision"
-          >
-           {Array.isArray(subdivisions) && subdivisions.map((subdivision, index) => (
-              <MenuItem key={subdivision?._id} value={subdivision?._id}>
-                {subdivision?.subdivision_name} 
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+                    <InputLabel id="subdivision-label">Subdivision Name</InputLabel>
+                    <Select
+                        labelId="subdivision-label"
+                        id="subdivision_id"
+                        value={newVilla.subdivision_id}
+                        onChange={handleChange('subdivision_id')}
+                        label="Subdivision"
+                    >
+                        {Array.isArray(subdivisions) && subdivisions.map((subdivision, index) => (
+                            <MenuItem key={subdivision?._id} value={subdivision?._id}>
+                                {subdivision?.subdivision_name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
                 <TextField
                     margin="dense"
                     id="area"
@@ -184,16 +201,20 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                     value={newVilla.stiff_price}
                     onChange={handleChange('stiff_price')}
                 />
-                <TextField
-    margin="dense"
-    id="url_image"
-    label="URL Image"
-    type="text"
-    fullWidth
-    value={newVilla.url_image}
-    onChange={handleChange('url_image')}
-/>
-
+                {newVilla.url_image.map((url, index) => (
+                    <div key={index}>
+                        <TextField
+                            margin="dense"
+                            label={`Image URL ${index + 1}`}
+                            type="text"
+                            fullWidth
+                            value={url}
+                            onChange={handleImageUrlChange(index)}
+                        />
+                        <Button onClick={() => handleRemoveImageUrl(index)}>Remove</Button>
+                    </div>
+                ))}
+                <Button onClick={handleAddImageUrl}>Add Image URL</Button>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary">
