@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   IconButton,
   Paper,
@@ -12,21 +11,26 @@ import {
   Tooltip,
   Container,
   Box,
-  Typography
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateAccountDialog from '../Popup/CreateAccount';
 import EditAccountDialog from '../Popup/EditAccount';
-
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-export default function AccountTable() {
 
+export default function AccountTable() {
   const [accounts, setAccounts] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [newAccount, setNewAccount] = useState({
@@ -37,8 +41,11 @@ export default function AccountTable() {
     gender:'',
     email: '',
   });
-  const [editAccount, setEditAccount] = useState(null); // State cho dự án đang chỉnh sửa
-  const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
+  const [editAccount, setEditAccount] = useState(null);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [accountIdToDelete, setAccountIdToDelete] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
     fetchAccounts();
@@ -46,16 +53,15 @@ export default function AccountTable() {
 
   const fetchAccounts = async () => {
     try {
-      const token = localStorage.getItem('token'); // Lấy token từ localStorage
+      const token = localStorage.getItem('token');
       const response = await fetch("http://localhost:5000/api/v1/accounts/", {
         headers: {
-          'Authorization': `Bearer ${token}`, // Thêm token vào header
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log('data', data);
         setAccounts(Array.isArray(data.result) ? data.result : []);
       } else {
         console.error("Failed to fetch accounts" + response.status);
@@ -64,7 +70,6 @@ export default function AccountTable() {
       console.error("Error fetching accounts:", error);
     }
   };
-
 
   const handleDelete = async (accountId) => {
     try {
@@ -84,15 +89,12 @@ export default function AccountTable() {
 
       if (response.ok) {
         fetchAccounts();
-        console.log("Account deleted successfully");
         toast.success("Account deleted successfully");
       } else {
-
         if (response.status === 401 || response.status === 403) {
           console.error("Unauthorized: Check if the provided token is valid.");
           toast.error("Deleting the Admin account is not allowed");
         } else {
-
           const errorMessage = await response.text();
           console.error(`Failed to delete Account. Server response: ${errorMessage}`);
           toast.error("Failed to delete Account.")
@@ -104,12 +106,9 @@ export default function AccountTable() {
     }
   };
 
-
   const handleUpdate = async () => {
-    console.log('editAccount', editAccount);
     try {
       const token = localStorage.getItem('token');
-
       const accountData = { ...editAccount };
       delete accountData._id;
 
@@ -121,11 +120,10 @@ export default function AccountTable() {
         },
         body: JSON.stringify(accountData),
       });
-      if (response.ok) {
 
+      if (response.ok) {
         fetchAccounts();
-        console.log("Account update successfully");
-        toast.success("Account update successfully");
+        toast.success("Account updated successfully");
       } else {
         console.error("Failed to update Account");
         toast.error("Failed to update Account");
@@ -136,6 +134,7 @@ export default function AccountTable() {
     }
     handleCloseEditDialog();
   };
+
   const handleOpenEditDialog = (account) => {
     setEditAccount(account);
     setOpenEditDialog(true);
@@ -146,7 +145,6 @@ export default function AccountTable() {
     setEditAccount(null);
   };
 
-
   const handleClickOpen = () => {
     setOpenDialog(true);
   };
@@ -154,6 +152,7 @@ export default function AccountTable() {
   const handleClose = () => {
     setOpenDialog(false);
   };
+
   const handleChange = (prop) => (event) => {
     setNewAccount({ ...newAccount, [prop]: event.target.value });
   };
@@ -172,8 +171,8 @@ export default function AccountTable() {
 
       if (response.ok) {
         const addedAccount = await response.json();
-        setAccounts([...accounts, addedAccount]); // Update the state
-        console.log("Account added successfully");
+        setAccounts([...accounts, addedAccount]);
+        toast.success("Account added successfully");
       } else {
         console.error("Failed to add Account");
         toast.error("Failed to add Account");
@@ -184,76 +183,101 @@ export default function AccountTable() {
     }
     handleClose();
   };
-// Thêm trạng thái mới để lưu trữ từ khóa tìm kiếm
-const [searchKeyword, setSearchKeyword] = useState('');
 
-// Thêm ô tìm kiếm vào UI
-<Box display="flex" justifyContent="flex-end" mb={2}>
-  <TextField
-    label="Search"
-    variant="outlined"
-    value={searchKeyword}
-    onChange={(e) => setSearchKeyword(e.target.value)}
-  />
-</Box>
+  const handleOpenConfirmDelete = (accountId) => {
+    setAccountIdToDelete(accountId);
+    setConfirmDelete(true);
+  };
 
-// Lọc danh sách tài khoản dựa trên từ khóa tìm kiếm
-const filteredAccounts = accounts.filter(account =>
-  account.full_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-  account.email.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-  account.user_name.toLowerCase().includes(searchKeyword.toLowerCase())
-);
+  const handleCloseConfirmDelete = () => {
+    setConfirmDelete(false);
+  };
+
+  const handleDeleteClick = (accountId) => {
+    handleOpenConfirmDelete(accountId);
+  };
+
+  const filteredAccounts = accounts.filter(account =>
+    account.full_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+    account.email.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+    account.user_name.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
 
   return (
-
-    <Container maxWidth="md" sx={{}}>
+    <Container maxWidth="md">
       <Typography variant="h6">Account List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2}>
-      <TextField
-  label="Search"
-  variant="outlined"
-  value={searchKeyword}
-  onChange={(e) => setSearchKeyword(e.target.value)}
-  InputProps={{
-    style: { 
-      backgroundColor: 'white', 
-      borderRadius: '4px', 
-    },
-    startAdornment: (
-      <InputAdornment position="start">
-        <SearchIcon style={{ color: '#707070' }} /> 
-      </InputAdornment>
-    ),
-  }}
-  InputLabelProps={{ 
-    style: { color: '#707070' } 
-  }}
-  fullWidth
-  size="medium"
-  style={{ marginBottom: '16px' }} 
-/>
+        <TextField
+          label="Search"
+          variant="outlined"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          InputProps={{
+            style: { 
+              backgroundColor: 'white', 
+              borderRadius: '4px', 
+            },
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon style={{ color: '#707070' }} /> 
+              </InputAdornment>
+            ),
+          }}
+          InputLabelProps={{ 
+            style: { color: '#707070' } 
+          }}
+          fullWidth
+          size="medium"
+          style={{ marginBottom: '16px' }} 
+        />
 
         <Tooltip title="Add New Account">
           <IconButton color="primary" onClick={handleClickOpen}>
             <AddCircleOutlineIcon />
           </IconButton>
         </Tooltip>
-
       </Box>
+
       <CreateAccountDialog
         open={openDialog}
-        handleClose={() => setOpenDialog(false)}
+        handleClose={handleClose}
         handleAccountAdd={handleAdd} />
+      
       <EditAccountDialog
         editAccount={editAccount}
         setEditAccount={setEditAccount}
         openEditDialog={openEditDialog}
         handleCloseEditDialog={handleCloseEditDialog}
         handleUpdate={handleUpdate} />
+
+      <Dialog
+        open={confirmDelete}
+        onClose={handleCloseConfirmDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc muốn xóa không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => {
+            handleDelete(accountIdToDelete);
+            handleCloseConfirmDelete();
+          }} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <div style={{ padding: '8px', width: '100%' }}>
         <Paper sx={{ width: '150%', overflow: 'hidden' }}>
-
-        <TableContainer sx={{ maxHeight: 600 }}>
+          <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -269,11 +293,10 @@ const filteredAccounts = accounts.filter(account =>
                 </TableRow>
               </TableHead>
               <TableBody>
-              {Array.isArray(filteredAccounts) && filteredAccounts.map((account, index) => (
+                {Array.isArray(filteredAccounts) && filteredAccounts.map((account, index) => (
                   <TableRow key={account._id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>{account.full_name || 'N/A'}</TableCell>
-
                     <TableCell align="left">
                       {account.birthday
                         ? new Date(account.birthday).toLocaleDateString('en-GB', {
@@ -283,10 +306,7 @@ const filteredAccounts = accounts.filter(account =>
                         })
                         : 'N/A'}
                     </TableCell>
-
-
                     <TableCell align="left">{account.phone_number || 'N/A'}</TableCell>
-
                     <TableCell align="left">{account.gender || 'N/A'}</TableCell>
                     <TableCell align="left">{account.email || 'N/A'}</TableCell>
                     <TableCell align="left">{account.user_name || 'N/A'}</TableCell>
@@ -294,7 +314,7 @@ const filteredAccounts = accounts.filter(account =>
                     <TableCell align="center">
                       <div className="flex">
                         <IconButton onClick={() => handleOpenEditDialog(account)}><EditIcon /></IconButton>
-                        <IconButton onClick={() => handleDelete(account._id)}><DeleteIcon /></IconButton>
+                        <IconButton onClick={() => handleDeleteClick(account._id)}><DeleteIcon /></IconButton>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -304,7 +324,7 @@ const filteredAccounts = accounts.filter(account =>
           </TableContainer>
         </Paper>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </Container>
   );
 }

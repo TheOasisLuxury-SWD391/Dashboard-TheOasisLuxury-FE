@@ -22,6 +22,7 @@ import {
   FormControl,
   InputLabel,
   Box,
+  DialogContentText,
   Typography
 } from "@mui/material";
 import "./Table.css";
@@ -65,7 +66,8 @@ export default function ProjectTable() {
   });
   const [editProject, setEditProject] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
-
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [accountIdToDelete, setAccountIdToDelete] = useState(null);
 
   useEffect(() => {
     fetchProjects();
@@ -170,7 +172,18 @@ export default function ProjectTable() {
   const handleClickOpen = () => {
     setOpenDialog(true);
   };
+  const handleOpenConfirmDelete = (accountId) => {
+    setAccountIdToDelete(accountId);
+    setConfirmDelete(true);
+  };
 
+  const handleCloseConfirmDelete = () => {
+    setConfirmDelete(false);
+  };
+
+  const handleDeleteClick = (accountId) => {
+    handleOpenConfirmDelete(accountId);
+  };
 
   const handleAdd = async () => {
     try {
@@ -248,6 +261,30 @@ export default function ProjectTable() {
         handleCloseEditDialog={handleCloseEditDialog}
         handleUpdate={handleUpdate}
       />
+        <Dialog
+        open={confirmDelete}
+        onClose={handleCloseConfirmDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc muốn xóa không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => {
+            handleDelete(accountIdToDelete);
+            handleCloseConfirmDelete();
+          }} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       {/* Table Projects list */}
       <div style={{ padding: '12px', width: '100%' }}>
         <Paper sx={{ width: '150%', overflow: 'hidden' }}>
@@ -283,7 +320,7 @@ export default function ProjectTable() {
                     <TableCell align="center">
                       <div className="flex">
                       <IconButton onClick={() => handleOpenEditDialog(project)}><EditIcon /></IconButton>
-                      <IconButton onClick={() => handleDelete(project._id)}><DeleteIcon /></IconButton>
+                      <IconButton onClick={() => handleDeleteClick(project._id)}><DeleteIcon /></IconButton>
                       </div>
                     </TableCell>
                   </TableRow>

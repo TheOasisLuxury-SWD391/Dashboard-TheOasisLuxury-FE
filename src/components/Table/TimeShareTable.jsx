@@ -12,6 +12,12 @@ import {
     Tooltip,
     Container,
     Box,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Dialog,
+    DialogContentText,
+    Button,
     Typography,
     TextField
 } from '@mui/material';
@@ -48,7 +54,8 @@ export default function TimeShareTable() {
     const [editTimeShare, setEditTimeShare] = useState(null); // State cho dự án đang chỉnh sửa
     const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
     // const [searchTerm, setSearchTerm] = useState('');
-
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [accountIdToDelete, setAccountIdToDelete] = useState(null);
     useEffect(() => {
         fetchTimeShares();
     }, []);
@@ -195,31 +202,42 @@ export default function TimeShareTable() {
     const filteredTimeShares = timeshares.filter(timeshare =>
         timeshare.time_share_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    const handleOpenConfirmDelete = (accountId) => {
+        setAccountIdToDelete(accountId);
+        setConfirmDelete(true);
+    };
 
-  
+    const handleCloseConfirmDelete = () => {
+        setConfirmDelete(false);
+    };
+
+    const handleDeleteClick = (accountId) => {
+        handleOpenConfirmDelete(accountId);
+    };
+
     return (
 
         <Container maxWidth="md" sx={{}}>
             <Typography variant="h6">Time Share List</Typography>
             <Box display="flex" justifyContent="flex-start" mb={2} >
-            <TextField
-          label="Search"
-          variant="outlined"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon style={{ color: '#707070' }} />
-              </InputAdornment>
-            ),
-            style: {
-              backgroundColor: 'white', 
-              borderRadius: '4px', 
-            },
-          }}
-          sx={{ width: '100%' }} 
-        />
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon style={{ color: '#707070' }} />
+                            </InputAdornment>
+                        ),
+                        style: {
+                            backgroundColor: 'white',
+                            borderRadius: '4px',
+                        },
+                    }}
+                    sx={{ width: '100%' }}
+                />
                 <Tooltip title="Add New TimeShare">
                     <IconButton color="primary" onClick={handleClickOpen}>
                         <AddCircleOutlineIcon />
@@ -239,6 +257,30 @@ export default function TimeShareTable() {
                 handleCloseEditDialog={handleCloseEditDialog}
                 handleUpdate={handleUpdate}
             />
+            <Dialog
+                open={confirmDelete}
+                onClose={handleCloseConfirmDelete}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Bạn có chắc muốn xóa không?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseConfirmDelete} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={() => {
+                        handleDelete(accountIdToDelete);
+                        handleCloseConfirmDelete();
+                    }} color="primary" autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <div style={{ padding: '16px', width: '100%' }}>
                 <Paper sx={{ width: '150%', overflow: 'hidden' }}>
                     <TableContainer sx={{ maxHeight: 600 }}>
@@ -256,7 +298,7 @@ export default function TimeShareTable() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                            {filteredTimeShares.map((timeshare, index) => (
+                                {filteredTimeShares.map((timeshare, index) => (
                                     <TableRow key={timeshare._id}>
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{timeshare.time_share_name || 'N/A'}</TableCell>
@@ -288,7 +330,7 @@ export default function TimeShareTable() {
                                         <TableCell align="center">
                                             <div className="flex">
                                                 <IconButton onClick={() => handleOpenEditDialog(timeshare)}><EditIcon /></IconButton>
-                                                <IconButton onClick={() => handleDelete(timeshare._id)}><DeleteIcon /></IconButton>
+                                                <IconButton onClick={() => handleDeleteClick(timeshare._id)}><DeleteIcon /></IconButton>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -298,7 +340,7 @@ export default function TimeShareTable() {
                     </TableContainer>
                 </Paper>
             </div>
-            <ToastContainer/>
+            <ToastContainer />
         </Container>
     );
 }

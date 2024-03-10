@@ -7,10 +7,11 @@ import {
   Grid,
   Button
 } from '@mui/material';
+import { toast } from 'react-toastify';
 
 const DetailsPage = () => {
   const { contractId } = useParams();
-  const navigate = useNavigate(); // Lấy đối tượng history
+  const navigate = useNavigate(); 
 
   const [contractDetails, setContractDetails] = useState(null);
 
@@ -52,12 +53,15 @@ const DetailsPage = () => {
       if (response.ok) {
         console.log('Contract confirmed successfully.');
         navigate('/contracts');
+        toast.success('Contract confirmed successfully');
      
       } else {
         console.error('Failed to confirm contract:', response.status);
+        toast.error('Failed to confirm contract:');
       }
     } catch (error) {
       console.error('Error confirming contract:', error);
+      toast.error('Error confirming contract');
     }
   };
 
@@ -75,11 +79,14 @@ const DetailsPage = () => {
       if (response.ok) {
         console.log('Contract rejected successfully.');
         navigate('/contracts');
+        toast.success('Contract rejected successfully.');
       } else {
         console.error('Failed to reject contract:', response.status);
+        toast.error('Failed to reject contract:')
       }
     } catch (error) {
       console.error('Error rejecting contract:', error);
+      toast.error('Failed to reject contract:')
     }
   };
 

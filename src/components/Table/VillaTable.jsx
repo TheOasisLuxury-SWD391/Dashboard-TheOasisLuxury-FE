@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect } from "react";
 import {
     IconButton,
+    Button,
     Paper,
     Table,
     TableBody,
@@ -11,10 +12,15 @@ import {
     TableRow,
     Tooltip,
     Container,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Dialog,
+    DialogContentText,
     Box,
     Typography,
     TextField,
-    Button
+    
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -60,7 +66,8 @@ export default function VillaTable() {
     const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
     // const [searchTerm, setSearchTerm] = useState('');
     const [subdivisions, setSubdivisions] = useState([]);
-
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [accountIdToDelete, setAccountIdToDelete] = useState(null);
 
     useEffect(() => {
         fetchVillas();
@@ -267,6 +274,7 @@ export default function VillaTable() {
             if (response.ok) {
                 console.log("TimeShare updated successfully");
                 fetchVillas(); // Refresh the villas to show the updated time share data
+                toast.success("TimeShare updated successfully");
             } else {
                 console.error("Failed to update TimeShare");
                 toast.error("Failed to update TimeShare");
@@ -303,7 +311,18 @@ export default function VillaTable() {
     const handleChange = (prop) => (event) => {
         setNewVilla({ ...newVilla, [prop]: event.target.value });
     };
-
+    const handleOpenConfirmDelete = (accountId) => {
+        setAccountIdToDelete(accountId);
+        setConfirmDelete(true);
+      };
+    
+      const handleCloseConfirmDelete = () => {
+        setConfirmDelete(false);
+      };
+    
+      const handleDeleteClick = (accountId) => {
+        handleOpenConfirmDelete(accountId);
+      };
 
 
     // const handleSearchChange = (event) => {
@@ -384,9 +403,33 @@ export default function VillaTable() {
                 handleCloseEditDialog={handleCloseEditDialog}
                 handleUpdate={handleUpdate}
             />
+              <Dialog
+        open={confirmDelete}
+        onClose={handleCloseConfirmDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc muốn xóa không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => {
+            handleDelete(accountIdToDelete);
+            handleCloseConfirmDelete();
+          }} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
             <div style={{ padding: '16px', width: '100%' }}>
                 <Paper sx={{ width: '150%', overflow: 'hidden' }}>
-                    <TableContainer sx={{ maxHeight: 1200 }}>
+                <TableContainer sx={{ maxHeight: 600 }}>
                         <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
@@ -479,7 +522,7 @@ export default function VillaTable() {
                                             <TableCell align="center">
                                                 <div className="flex">
                                                     <IconButton onClick={() => handleOpenEditDialog(villa)}><EditIcon /></IconButton>
-                                                    <IconButton onClick={() => handleDelete(villa._id)}><DeleteIcon /></IconButton>
+                                                    <IconButton onClick={() => handleDeleteClick(villa._id)}><DeleteIcon /></IconButton>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
