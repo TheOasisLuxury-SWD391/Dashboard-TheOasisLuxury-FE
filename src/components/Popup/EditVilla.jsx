@@ -12,7 +12,7 @@ import {
     MenuItem,
 } from "@mui/material";
 
-function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseEditDialog, handleUpdate }) {
+function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseEditDialog }) {
     const [subdivisions, setSubdivisions] = useState([]);
 
 
@@ -55,6 +55,35 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
             console.error("Error fetching subdivisions:", error);
         }
     };
+
+    const handleUpdate = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:5000/api/v1/villas/${editVilla._id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(editVilla),
+            });
+    
+            if (response.ok) {
+                const updatedVilla = await response.json();
+                console.log("Villa updated successfully");
+    
+                // Cập nhật danh sách villas trong UI, nếu cần
+                // setVillas((prevVillas) => prevVillas.map((villa) => villa._id === updatedVilla._id ? updatedVilla : villa));
+    
+                handleCloseEditDialog();
+            } else {
+                console.error("Failed to update villa");
+            }
+        } catch (error) {
+            console.error("Error updating villa:", error);
+        }
+    };
+    
 
     const handleEditImageChange = (index) => (event) => {
         const newImages = [...editVilla.url_image];
@@ -167,6 +196,23 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
                     value={editVilla?.stiff_price}
                     onChange={handleEditChange('stiff_price')}
                 />
+                <FormControl fullWidth margin="dense">
+                    <InputLabel id="subdivision-label">Subdivision Name</InputLabel>
+                    <Select
+                        labelId="subdivision-label"
+                        id="subdivision_id"
+                        value={editVilla?.subdivision_id}
+                        onChange={handleEditChange('subdivision_id')}
+                        label="Subdivision"
+                        disabled
+                    >
+                        {subdivisions.map((subdivision) => (
+                            <MenuItem key={subdivision._id} value={subdivision._id}>
+                                {subdivision.subdivision_name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
                 {editVilla?.url_image.map((url, index) => (
                     <div key={index}>
                         <TextField

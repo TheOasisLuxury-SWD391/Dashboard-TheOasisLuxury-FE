@@ -282,7 +282,7 @@ export default function TimeShareTable() {
                 </DialogActions>
             </Dialog>
             <div style={{ padding: '16px', width: '100%' }}>
-                <Paper sx={{ width: '150%', overflow: 'hidden' }}>
+                <Paper sx={{ width: '130%', overflow: 'hidden' }}>
                     <TableContainer sx={{ maxHeight: 600 }}>
                         <Table>
                             <TableHead>
@@ -301,7 +301,18 @@ export default function TimeShareTable() {
                                 {filteredTimeShares.map((timeshare, index) => (
                                     <TableRow key={timeshare._id}>
                                         <TableCell>{index + 1}</TableCell>
-                                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{timeshare.time_share_name || 'N/A'}</TableCell>
+                                        <TableCell 
+                                            align="left"  
+                                            style={{
+                                                    maxWidth: 150,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                            title={timeshare.time_share_name} 
+                                        >
+                                            {timeshare.time_share_name || 'N/A'}
+                                        </TableCell>
 
                                         <TableCell align="left" >
                                             {timeshare.start_date

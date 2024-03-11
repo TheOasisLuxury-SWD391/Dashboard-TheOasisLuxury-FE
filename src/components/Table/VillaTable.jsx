@@ -56,12 +56,12 @@ export default function VillaTable() {
         status: '',
         fluctuates_price: 0,
         stiff_price: 0,
-        subdivision_name:'',
+        subdivision_name: '',
         start_date: '',
         end_date: '',
         url_image: [], // Thêm trường mới
     });
-    
+
     const [editVilla, setEditVilla] = useState(null); // State cho dự án đang chỉnh sửa
     const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
     // const [searchTerm, setSearchTerm] = useState('');
@@ -87,7 +87,7 @@ export default function VillaTable() {
                 console.log('data', data);
                 if (Array.isArray(data.result)) {
                     const villasWithDetails = [...data.result]; // Tạo một bản sao của mảng villas
-            
+
                     for (let i = 0; i < villasWithDetails.length; i++) {
                         if (villasWithDetails[i].time_share_id) {
                             console.log('villa.time_share_id', villasWithDetails[i].time_share_id);
@@ -108,7 +108,7 @@ export default function VillaTable() {
                             }
                         }
                     }
-            
+
                     setVillas(villasWithDetails); // Cập nhật trạng thái với mảng đã cập nhật
                 } else {
                     setVillas([]);
@@ -224,7 +224,7 @@ export default function VillaTable() {
                         start_date: editVilla.start_date,
                         end_date: editVilla.end_date,
                     };
-    
+
                     const timeShareResponse = await fetch(`http://localhost:5000/api/v1/timeshares/${updatedVilla.time_share_id}`, {
                         method: 'PATCH',
                         headers: {
@@ -233,7 +233,7 @@ export default function VillaTable() {
                         },
                         body: JSON.stringify(timeShareData),
                     });
-    
+
                     if (timeShareResponse.ok) {
                         console.log("TimeShare updated successfully");
                         toast.success("TimeShare updated successfully");
@@ -242,7 +242,7 @@ export default function VillaTable() {
                         toast.error("Failed to update TimeShare");
                     }
                 }
-    
+
                 // Refresh dữ liệu sau khi cập nhật
                 fetchVillas();
             } else {
@@ -428,12 +428,13 @@ export default function VillaTable() {
         </DialogActions>
       </Dialog>
             <div style={{ padding: '16px', width: '100%' }}>
-                <Paper sx={{ width: '150%', overflow: 'hidden' }}>
-                <TableContainer sx={{ maxHeight: 600 }}>
+                <Paper sx={{ width: '130%', overflow: 'hidden' }}>
+                    <TableContainer sx={{ maxHeight: 700 }}>
                         <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell>No.</TableCell>
+                                    <TableCell align="center">Image</TableCell>
                                     <TableCell>Name</TableCell>
                                     <TableCell>Address</TableCell>
                                     <TableCell>Subdivision Name</TableCell>
@@ -445,7 +446,6 @@ export default function VillaTable() {
                                     <TableCell>Stiff Price</TableCell>
                                     <TableCell>Insert Date</TableCell>
                                     <TableCell>Update Date</TableCell>
-                                    <TableCell align="center">Image</TableCell>
                                     <TableCell align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -456,31 +456,53 @@ export default function VillaTable() {
                                     return (
                                         <TableRow key={villa._id}>
                                             <TableCell>{index + 1}</TableCell>
-                                            <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.villa_name || 'N/A'}</TableCell>
-
-                                            <TableCell 
+                                            <TableCell align="left">
+                                                {Array.isArray(villa.url_image) && villa.url_image.map((url, index) => (
+                                                    <div key={index}>
+                                                        <img src={url} alt={`Image ${index}`} draggable={false} style={{
+                                                            width: '100%', // Ensure the image takes full width
+                                                            height: 'auto', // Maintain aspect ratio
+                                                            objectFit: 'cover',
+                                                            margin:'10px'
+                                                        }} />
+                                                    </div>
+                                                ))}
+                                            </TableCell>
+                                            <TableCell
+                                                style={{
+                                                    maxWidth: 200,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap'
+                                                }}
                                                 align="left" 
-                                                style={{ 
-                                                    maxWidth: 150, 
-                                                    overflow: 'hidden', 
-                                                    textOverflow: 'ellipsis', 
-                                                    whiteSpace: 'nowrap' 
+                                                title={villa.villa_name}>
+                                                {villa.villa_name || 'N/A'}
+                                            </TableCell>
+
+                                            <TableCell
+                                                align="left"
+                                                style={{
+                                                    maxWidth: 150,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap'
                                                 }}
                                                 title={villa.address}>{villa.address || 'N/A'}</TableCell>
                                             <TableCell key={subdivision?._id} value={subdivision?._id} align="left">{subdivision?.subdivision_name}</TableCell>
                                             {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.address || 'N/A'}</TableCell> */}
-                                            <TableCell 
-                                                align="left" 
-                                                style={{ 
-                                                    maxWidth: 150, 
-                                                    overflow: 'hidden', 
-                                                    textOverflow: 'ellipsis', 
-                                                    whiteSpace: 'nowrap' 
+                                            <TableCell
+                                                align="left"
+                                                style={{
+                                                    maxWidth: 150,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap'
                                                 }}
                                                 title={villa.area}>
-                                                    {villa.area || 'N/A'}
+                                                {villa.area || 'N/A'}
                                             </TableCell>
-                                            <TableCell align="left"> 
+                                            <TableCell align="left">
                                                 {villa?.timeShareDetails?.result?.start_date ? new Date(villa?.timeShareDetails?.result?.start_date).toLocaleString('en-GB', {
                                                     day: '2-digit',
                                                     month: '2-digit',
@@ -518,7 +540,7 @@ export default function VillaTable() {
                                                     })
                                                     : 'N/A'}
                                             </TableCell>
-                                            <TableCell align="left">{villa.url_image}</TableCell>
+                                            
                                             <TableCell align="center">
                                                 <div className="flex">
                                                     <IconButton onClick={() => handleOpenEditDialog(villa)}><EditIcon /></IconButton>

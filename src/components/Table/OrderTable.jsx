@@ -127,7 +127,7 @@ export default function OrderTable() {
       </Box>
 
       <div style={{ padding: '8px', width: '100%' }}>
-        <Paper sx={{ width: '150%', overflow: 'hidden' }}>
+        <Paper sx={{ width: '130%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
