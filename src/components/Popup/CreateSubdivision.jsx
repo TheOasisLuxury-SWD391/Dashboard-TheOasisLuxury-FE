@@ -22,7 +22,7 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
     update_date: '',
     quantityVilla: 0,
     status: '',
-   
+    url_image: [], 
   });
 
   const [projects, setProjects] = useState([]);
@@ -74,6 +74,8 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
       if (response.ok) {
         const addedSubdivision = await response.json();
         setSubdivisions([...subdivisions, addedSubdivision]); 
+        addedSubdivision.url_image = newSubdivision.url_image;
+        setSubdivisions([...subdivisions, addedSubdivision]);
         console.log("Subdivision added successfully");
         toast.success("Subdivision added successfully");
       } else {
@@ -137,6 +139,16 @@ const CreateSubdivisionDialog = ({ open, handleClose, setSubdivisions, subdivisi
           value={newSubdivision.quantityVilla}
           onChange={handleChange('quantityVilla')}
         />
+          <TextField
+    margin="dense"
+    id="url_image"
+    label="URL Image"
+    type="text"
+    fullWidth
+    value={newSubdivision.url_image}
+    onChange={handleChange('url_image')}
+/>
+
         <FormControl fullWidth margin="dense">
           <InputLabel id="status-label">Status</InputLabel>
           <Select

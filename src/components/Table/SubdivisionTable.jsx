@@ -55,7 +55,7 @@ export default function SubdivisionTable() {
     updateDate: '',
     quantityVilla: '',
     status: '',
-    
+    url_image: [], 
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
@@ -197,6 +197,8 @@ export default function SubdivisionTable() {
       if (response.ok) {
         const addedSubdivision = await response.json();
         setSubdivisions([...subdivisions, addedSubdivision]); // Update the state
+        addedSubdivision.url_image = newSubdivision.url_image;
+        setSubdivisions([...subdivisions, addedSubdivision]);
         console.log("Subdivision added successfully");
         toast.success("Subdivision added successfully");
       } else {
@@ -336,6 +338,7 @@ export default function SubdivisionTable() {
                   <TableCell align="left">Update Date</TableCell>
                   <TableCell align="left">Quantity</TableCell>
                   <TableCell align="center">Status</TableCell>
+                  <TableCell align="center">Image</TableCell>
                   <TableCell align="center">Project Name</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
@@ -373,7 +376,7 @@ export default function SubdivisionTable() {
                       <TableCell align="center">
                         <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
                       </TableCell>
-
+                      <TableCell align="left">{subdivision.url_image}</TableCell>
                       <TableCell key={project?._id} value={project?._id} align="left">{project?.project_name}</TableCell>
                       <TableCell align="center">
                         <div className="flex">
