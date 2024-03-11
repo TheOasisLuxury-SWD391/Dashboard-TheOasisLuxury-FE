@@ -37,7 +37,7 @@ function EditProjectDialog({ editProject, setEditProject, openEditDialog, handle
           margin="dense"
           id="start_date"
           label="Start Date"
-          type="text"
+          type="date"
           fullWidth
           value={editProject?.start_date}
           onChange={handleEditChange('start_date')}
@@ -46,7 +46,7 @@ function EditProjectDialog({ editProject, setEditProject, openEditDialog, handle
           margin="dense"
           id="end_date"
           label="End Date"
-          type="text"
+          type="date"
           fullWidth
           value={editProject?.end_date}
           onChange={handleEditChange('end_date')}
