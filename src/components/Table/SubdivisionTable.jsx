@@ -196,7 +196,7 @@ export default function SubdivisionTable() {
 
       if (response.ok) {
         const addedSubdivision = await response.json();
-        setSubdivisions([...subdivisions, addedSubdivision]); // Update the state
+        setSubdivisions([...subdivisions, addedSubdivision]); 
         addedSubdivision.url_image = newSubdivision.url_image;
         setSubdivisions([...subdivisions, addedSubdivision]);
         console.log("Subdivision added successfully");
@@ -347,7 +347,6 @@ export default function SubdivisionTable() {
 
                 {filteredSubdivisions.map((subdivision, index) => {
                   const project = projects.find(p => p._id === subdivision.project_id);
-
                   return (
                     <TableRow key={subdivision._id}>
                       <TableCell>{index + 1}</TableCell>

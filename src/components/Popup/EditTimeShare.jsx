@@ -33,8 +33,31 @@ function EditTimeShareDialog({ editTimeShare, setEditTimeShare, openEditDialog, 
                     onChange={handleEditChange('time_share_name')}
                     size="small"
                 />
+                <TextField
+                    margin="dense"
+                    id="start_date"
+                    label="Start Date"
+                    type="date"
+                    fullWidth
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    value={editTimeShare?.start_date || ''}
+                    onChange={handleEditChange('start_date')}
+                />
 
-                
+                <TextField
+                    margin="dense"
+                    id="end_date"
+                    label="End Date"
+                    type="date"
+                    fullWidth
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    value={editTimeShare?.end_date || ''}
+                    onChange={handleEditChange('end_date')}
+                />
                 <TextField
                     margin="dense"
                     id="time_share_type"
@@ -45,8 +68,8 @@ function EditTimeShareDialog({ editTimeShare, setEditTimeShare, openEditDialog, 
                     onChange={handleEditChange('time_share_type')}
                     size="small"
                 />
-             
-             
+
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCloseEditDialog}>Cancel</Button>
