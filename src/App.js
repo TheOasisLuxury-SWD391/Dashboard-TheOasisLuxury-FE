@@ -24,6 +24,7 @@ import ContractPage from './pages/contract';
 import DetailsPage from './pages/detail';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import OrderDetailsPage from './pages/order-detail';
 
 function App() {
   
@@ -108,6 +109,7 @@ function App() {
                   </>
                 )}
                 <Route path="/details/:contractId" element={<DetailsPage />} />
+                <Route path="/orders/:orderId" element={<OrderDetailsPage />} />
               </Routes>
           
             </>
