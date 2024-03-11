@@ -84,6 +84,7 @@ export default function ContractTable() {
     // Use the navigate function to navigate to the details page
     navigate(`/details/${contractId}`);
   };
+  
   return (
 
     <Container maxWidth="md" sx={{}} className=''>

@@ -2,17 +2,23 @@ import React from 'react';
 import { useState, useEffect } from "react";
 import {
   IconButton,
+  Button,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Dialog,
   TableHead,
   TableRow,
   Tooltip,
   Container,
   Box,
   Typography,
+  DialogContentText,
   TextField
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -53,7 +59,8 @@ export default function SubdivisionTable() {
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
-
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [accountIdToDelete, setAccountIdToDelete] = useState(null);
 
 
   useEffect(() => {
@@ -234,7 +241,18 @@ export default function SubdivisionTable() {
   const filteredSubdivisions = subdivisions.filter(subdivision =>
     subdivision.subdivision_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const handleOpenConfirmDelete = (accountId) => {
+    setAccountIdToDelete(accountId);
+    setConfirmDelete(true);
+  };
 
+  const handleCloseConfirmDelete = () => {
+    setConfirmDelete(false);
+  };
+
+  const handleDeleteClick = (accountId) => {
+    handleOpenConfirmDelete(accountId);
+  };
 
 
 
@@ -281,6 +299,30 @@ export default function SubdivisionTable() {
         handleCloseEditDialog={handleCloseEditDialog}
         handleUpdate={handleUpdate}
       />
+        <Dialog
+        open={confirmDelete}
+        onClose={handleCloseConfirmDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc muốn xóa không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => {
+            handleDelete(accountIdToDelete);
+            handleCloseConfirmDelete();
+          }} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div style={{ padding: '16px', width: '100%' }}>
         <Paper sx={{ width: '150%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 600 }}>
@@ -336,7 +378,7 @@ export default function SubdivisionTable() {
                       <TableCell align="center">
                         <div className="flex">
                           <IconButton onClick={() => handleOpenEditDialog(subdivision)}><EditIcon /></IconButton>
-                          <IconButton onClick={() => handleDelete(subdivision._id)}><DeleteIcon /></IconButton>
+                          <IconButton onClick={() => handleDeleteClick(subdivision._id)}><DeleteIcon /></IconButton>
                         </div>
                       </TableCell>
                     </TableRow>
