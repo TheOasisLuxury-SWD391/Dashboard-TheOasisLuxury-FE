@@ -326,19 +326,19 @@ export default function SubdivisionTable() {
         </DialogActions>
       </Dialog>
       <div style={{ padding: '16px', width: '100%' }}>
-        <Paper sx={{ width: '150%', overflow: 'hidden' }}>
+        <Paper sx={{ width: '130%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell align="left">Name</TableCell>
+                  <TableCell align="center">Image</TableCell>
                   <TableCell align="left">Location</TableCell>
                   <TableCell align="left">Insert Date</TableCell>
                   <TableCell align="left">Update Date</TableCell>
                   <TableCell align="left">Quantity</TableCell>
                   <TableCell align="center">Status</TableCell>
-                  <TableCell align="center">Image</TableCell>
                   <TableCell align="center">Project Name</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
@@ -352,6 +352,7 @@ export default function SubdivisionTable() {
                     <TableRow key={subdivision._id}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.subdivision_name || 'N/A'}</TableCell>
+                      <TableCell align="left"><img src={subdivision.url_image}/></TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.location || 'N/A'}</TableCell>
                       <TableCell align="left" >
                         {subdivision.insert_date
@@ -376,7 +377,6 @@ export default function SubdivisionTable() {
                       <TableCell align="center">
                         <span className="status" style={makeStyle(subdivision.status || 'INACTIVE')}>{subdivision.status || 'INACTIVE'}</span>
                       </TableCell>
-                      <TableCell align="left">{subdivision.url_image}</TableCell>
                       <TableCell key={project?._id} value={project?._id} align="left">{project?.project_name}</TableCell>
                       <TableCell align="center">
                         <div className="flex">

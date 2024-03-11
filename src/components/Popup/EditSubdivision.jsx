@@ -48,32 +48,32 @@ function EditSubdivisionDialog({
 
     fetchProjects();
   }, []);
-    return (
-        <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
-            <DialogTitle>Edit Subdivision</DialogTitle>
-            <DialogContent>
-                
-                <TextField
-                    margin="dense"
-                    id="name"
-                    label="Subdivision Name"
-                    type="text"
-                    fullWidth
-                    value={editSubdivision?.subdivision_name}
-                    onChange={handleEditChange('subdivision_name')}
-                    size="small"
-                />
-                <TextField
-                 margin="dense"
-                 id="location"
-                 label="Location"
-                 type="text"
-                 fullWidth
-                    value={editSubdivision?.location}
-                    onChange={handleEditChange('location')}
-                    size="small"
-                />
-                {/* <TextField
+  return (
+    <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
+      <DialogTitle>Edit Subdivision</DialogTitle>
+      <DialogContent>
+
+        <TextField
+          margin="dense"
+          id="name"
+          label="Subdivision Name"
+          type="text"
+          fullWidth
+          value={editSubdivision?.subdivision_name}
+          onChange={handleEditChange('subdivision_name')}
+          size="small"
+        />
+        <TextField
+          margin="dense"
+          id="location"
+          label="Location"
+          type="text"
+          fullWidth
+          value={editSubdivision?.location}
+          onChange={handleEditChange('location')}
+          size="small"
+        />
+        {/* <TextField
                  margin="dense"
                  id="insert_date"
                  label="Insert Date"
@@ -95,22 +95,22 @@ function EditSubdivisionDialog({
                     size="small"
                     InputLabelProps={{ shrink: true }}
                 /> */}
-              
-                <FormControl fullWidth margin="dense">
-                    <InputLabel id="status-label">Status</InputLabel>
-                    <Select
-                        labelId="status-label"
-                        id="status"
-                        name="status"
-                        value={editSubdivision?.status}
-                        onChange={handleEditChange('status')}
-                        label="Status"
-                    >
-                        <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-                        <MenuItem value="INACTIVE">INACTIVE</MenuItem>
-                    </Select>
-                </FormControl>
-                {/* <FormControl fullWidth margin="dense">
+
+        <FormControl fullWidth margin="dense">
+          <InputLabel id="status-label">Status</InputLabel>
+          <Select
+            labelId="status-label"
+            id="status"
+            name="status"
+            value={editSubdivision?.status}
+            onChange={handleEditChange('status')}
+            label="Status"
+          >
+            <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+            <MenuItem value="INACTIVE">INACTIVE</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth margin="dense">
           <InputLabel id="project-label">Project Name</InputLabel>
           <Select
             labelId="project-label"
@@ -118,14 +118,15 @@ function EditSubdivisionDialog({
             value={editSubdivision?.project_id}
             onChange={handleEditChange('project_id')}
             label="Project"
+            disabled
           >
-           {Array.isArray(projects) && projects.map((project, index) => (
+            {Array.isArray(projects) && projects.map((project, index) => (
               <MenuItem key={project._id} value={project._id}>
                 {project.project_name}
               </MenuItem>
             ))}
           </Select>
-        </FormControl> */}
+        </FormControl> 
           <TextField
                     margin="dense"
                     id="url_image"

@@ -276,8 +276,9 @@ export default function AccountTable() {
       </Dialog>
 
       <div style={{ padding: '8px', width: '100%' }}>
-        <Paper sx={{ width: '150%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: 600 }}>
+        <Paper sx={{ width: '130%', overflow: 'hidden' }}>
+
+        <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>
