@@ -45,10 +45,17 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
 
             if (response.ok) {
                 const addedVilla = await response.json();
+                // console.log('addedVilla',addedVilla);
                 // Thêm dữ liệu hình ảnh vào villa mới
                 addedVilla.url_image = newVilla.url_image;
                 setVillas([...villas, addedVilla]);
+                const villaId = addedVilla._id;
+                const subdivisionId = newVilla.subdivision_id;
+                
+                // Gọi API để cập nhật subdivision
+                await updateSubdivision(subdivisionId, villaId, token);
                 console.log("Villa added successfully");
+
             } else {
                 console.error("Failed to add Villa");
             }
@@ -56,6 +63,27 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
             console.error("Error adding villa:", error);
         }
         handleClose();
+    };
+
+    const updateSubdivision = async (subdivisionId, villaId, token) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/v1/subdivisions/${subdivisionId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ $push: { villas: villaId } }), // Thêm villaId vào mảng villas
+            });
+    
+            if (response.ok) {
+                console.log("Subdivision updated successfully");
+            } else {
+                console.error("Failed to update subdivision");
+            }
+        } catch (error) {
+            console.error("Error updating subdivision:", error);
+        }
     };
 
     useEffect(() => {
