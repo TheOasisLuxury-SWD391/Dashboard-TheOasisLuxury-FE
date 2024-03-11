@@ -63,7 +63,24 @@ const CreateTimeShareDialog = ({ open, handleClose, setTimeShares, timeshares })
           value={newTimeShare.time_share_name}
           onChange={handleChange('time_share_name')}
         />
-     
+      <TextField
+                    margin="dense"
+                    id="start_date"
+                    label="StartDate"
+                    type="date"
+                    fullWidth
+                    value={newTimeShare.start_date}
+                    onChange={handleChange('start_date')}
+                />
+                <TextField
+                    margin="dense"
+                    id="end_date"
+                    label="EndDate"
+                    type="date"
+                    fullWidth
+                    value={newTimeShare.end_date}
+                    onChange={handleChange('end_date')}
+                />
        
         <TextField
           margin="dense"
