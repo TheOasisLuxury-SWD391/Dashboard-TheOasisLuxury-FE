@@ -46,6 +46,8 @@ export default function AccountTable() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5); // Số phần tử trên mỗi trang
 
   useEffect(() => {
     fetchAccounts();
@@ -203,6 +205,27 @@ export default function AccountTable() {
     account.user_name.toLowerCase().includes(searchKeyword.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredAccounts.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredAccounts.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <Container maxWidth="md">
       <Typography variant="h6">Account List</Typography>
@@ -294,7 +317,7 @@ export default function AccountTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(filteredAccounts) && filteredAccounts.map((account, index) => (
+                {Array.isArray(currentItems) && currentItems.map((account, index) => (
                   <TableRow key={account._id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>{account.full_name || 'N/A'}</TableCell>
@@ -325,6 +348,16 @@ export default function AccountTable() {
           </TableContainer>
         </Paper>
       </div>
+
+      {/* Phân trang */}
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+        ))}
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
+      </div>
+
       <ToastContainer />
     </Container>
   );

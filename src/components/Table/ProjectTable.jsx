@@ -68,7 +68,9 @@ export default function ProjectTable() {
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
-
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5); 
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -212,11 +214,32 @@ export default function ProjectTable() {
     }
     handleClose();
   };
-  const [searchKeyword, setSearchKeyword] = useState('');
+ 
   const filteredProjects = projects.filter(project =>
     project.project_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
     project.description.toLowerCase().includes(searchKeyword.toLowerCase())
   );
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredProjects.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <Container maxWidth="md" className="">
       {/* <h3>Project List</h3> */}
@@ -303,7 +326,7 @@ export default function ProjectTable() {
                 </TableRow>
               </TableHead>
               <TableBody style={{ color: "white" }}>
-              {Array.isArray(filteredProjects) && filteredProjects.map((project, index) => (
+              {Array.isArray(currentItems) && currentItems.map((project, index) => (
                   <TableRow key={project._id}>
                     <TableCell>{index + 1}</TableCell>
                     {/* <TableCell component="th" scope="row">
@@ -331,6 +354,14 @@ export default function ProjectTable() {
           </TableContainer>
         </Paper>
       </div>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+        ))}
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
+      </div>
+
       <ToastContainer/>
     </Container>
   );

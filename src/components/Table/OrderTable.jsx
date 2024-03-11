@@ -61,6 +61,8 @@ export default function OrderTable() {
 
   const [orders, setOrders] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5); // Số đơn hàng trên mỗi trang
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const [editOrder, setEditOrder] = useState(null);
@@ -156,6 +158,27 @@ export default function OrderTable() {
     }
   };
 
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <Container maxWidth="md" sx={{}} className=''>
       <Typography variant="h6">Order List</Typography>
@@ -227,18 +250,18 @@ export default function OrderTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(filteredOrders) && filteredOrders.map((order, index) => (
+                {Array.isArray(currentItems) && currentItems.map((order, index) => (
                   <TableRow key={order._id}>
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell 
-                    style={{
-                      maxWidth: 150,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap'
-                    }}
-                    title={order.order_name || 'N/A'}
-                    align="left" >{order.order_name || 'N/A'}</TableCell>
+                    <TableCell
+                      style={{
+                        maxWidth: 150,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}
+                      title={order.order_name || 'N/A'}
+                      align="left" >{order.order_name || 'N/A'}</TableCell>
 
                     <TableCell align="left">
                       {order.start_date
@@ -280,6 +303,15 @@ export default function OrderTable() {
             </Table>
           </TableContainer>
         </Paper>
+      </div>
+
+      {/* Phân trang */}
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+        ))}
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
       </div>
       <ToastContainer />
     </Container>

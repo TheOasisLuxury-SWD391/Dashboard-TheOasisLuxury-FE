@@ -25,6 +25,7 @@ import DetailsPage from './pages/detail';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import OrderDetailsPage from './pages/order-detail';
+import BlogPage from './pages/blog';
 
 function App() {
   
@@ -97,6 +98,7 @@ function App() {
                     <Route path="/projects" element={<ProjectPage />} />
                     <Route path="/villas" element={<VillaPage />} />
                     <Route path="/timeshares" element={<TimeSharePage />} />
+                    <Route path="/blogs" element={<BlogPage />} />
                   </>
                 )}
                 {role === 'STAFF' && (
