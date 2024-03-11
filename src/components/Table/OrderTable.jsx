@@ -2,25 +2,33 @@ import React from 'react';
 import { useState, useEffect } from "react";
 import {
   IconButton,
+  Button,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Dialog,
   TableHead,
   TableRow,
   Tooltip,
   Container,
   Box,
   Typography,
-  Button
+  DialogContentText,
+  TextField
 } from '@mui/material';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from 'react-router-dom';
+import EditIcon from '@mui/icons-material/Edit';
+
 export default function OrderTable() {
   const makeStyle = (status) => {
     if (status === 'SUCCESS') {
@@ -48,18 +56,22 @@ export default function OrderTable() {
         background: 'green',
         color: 'black',
       };
-      
     }
   };
+
   const [orders, setOrders] = useState([]);
- 
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [accountIdToDelete, setAccountIdToDelete] = useState(null);
+  const [editOrder, setEditOrder] = useState(null);
+  const [openEditDialog, setOpenEditDialog] = useState(false); // Define openEditDialog state here
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchOrders();
   }, []);
 
   const fetchOrders = async () => {
-
     try {
       const token = localStorage.getItem('token');
       const response = await fetch("http://localhost:5000/api/v1/orders/", {
@@ -80,23 +92,71 @@ export default function OrderTable() {
     }
   };
 
-  const [searchKeyword, setSearchKeyword] = useState('');
-  <Box display="flex" justifyContent="flex-end" mb={2}>
-    <TextField
-      label="Search"
-      variant="outlined"
-      value={searchKeyword}
-      onChange={(e) => setSearchKeyword(e.target.value)}
-    />
-  </Box>
-
   const filteredOrders = orders.filter(order =>
     (typeof order.order_name === 'string' && order.order_name.toLowerCase().includes(searchKeyword.toLowerCase())) ||
     (typeof order.price === 'string' && order.price.toLowerCase().includes(searchKeyword.toLowerCase()))
   );
-  
-  return (
 
+  const handleDetailsClick = (orderId) => {
+    // Use the navigate function to navigate to the details page
+    navigate(`${orderId}`);
+  };
+
+  const handleOpenEditDialog = (order) => {
+    setEditOrder(order);
+    setOpenEditDialog(true);
+  };
+
+  const handleOpenConfirmDelete = (accountId) => {
+    setAccountIdToDelete(accountId);
+    setConfirmDelete(true);
+  };
+
+  const handleCloseConfirmDelete = () => {
+    setConfirmDelete(false);
+  };
+
+  const handleDeleteClick = (accountId) => {
+    handleOpenConfirmDelete(accountId);
+  };
+
+  const handleDelete = async (orderId) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        console.error("Token is missing. Unable to delete order.");
+        return;
+      }
+
+      const response = await fetch(`http://localhost:5000/api/v1/orders/${orderId}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        fetchOrders();
+        console.log("order deleted successfully");
+        toast.success("order deleted successfully");
+      } else {
+
+        if (response.status === 401 || response.status === 403) {
+          console.error("Unauthorized: Check if the provided token is valid.");
+        } else {
+
+          const errorMessage = await response.text();
+          console.error(`Failed to delete order. Server response: ${errorMessage}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting order:", error.message);
+      toast.error("Error deleting order");
+    }
+  };
+
+  return (
     <Container maxWidth="md" sx={{}} className=''>
       <Typography variant="h6">Order List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2}>
@@ -122,10 +182,32 @@ export default function OrderTable() {
           fullWidth
           size="medium"
           style={{ marginBottom: '16px' }}
-
         />
       </Box>
-
+      <Dialog
+        open={confirmDelete}
+        onClose={handleCloseConfirmDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc muốn xóa không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => {
+            handleDelete(accountIdToDelete);
+            handleCloseConfirmDelete();
+          }} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div style={{ padding: '8px', width: '100%' }}>
         <Paper sx={{ width: '130%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 600 }}>
@@ -140,8 +222,8 @@ export default function OrderTable() {
                   <TableCell align="center">Invoice ID</TableCell>
                   <TableCell align="center">Status</TableCell>
                   <TableCell>Description</TableCell>
+                  <TableCell>Detail</TableCell>
                   <TableCell>Action</TableCell>
-                  
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -176,23 +258,27 @@ export default function OrderTable() {
                         })
                         : 'N/A'}
                     </TableCell>
-
-
                     <TableCell align="left">{order.price || 'N/A'}</TableCell>
                     <TableCell align="left">{order.invoice_id || 'N/A'}</TableCell>
                     <TableCell align="center">
                       <span className="status" style={makeStyle(order.status || 'INACTIVE')}>{order.status || 'INACTIVE'}</span>
                     </TableCell>
                     <TableCell align="left">{order.description || ''}</TableCell>
-                    <TableCell align="left"><Button>ĐÃ THANH TOÁN</Button></TableCell>
-                   
-
+                    <TableCell align="center">
+                      <Button onClick={() => handleDetailsClick(order._id)}>
+                        Detail
+                      </Button>
+                    </TableCell>
+                    <TableCell align="center">
+                      <div className="flex">
+                        <IconButton onClick={() => handleDeleteClick(order._id)}><DeleteIcon /></IconButton>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-
         </Paper>
       </div>
       <ToastContainer />

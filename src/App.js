@@ -105,7 +105,6 @@ function App() {
                     <Route path="/projects" element={<ProjectPage />} />
                     <Route path="/villas" element={<VillaPage />} />
                     <Route path="/timeshares" element={<TimeSharePage />} />
-                   
                   </>
                 )}
                 <Route path="/details/:contractId" element={<DetailsPage />} />

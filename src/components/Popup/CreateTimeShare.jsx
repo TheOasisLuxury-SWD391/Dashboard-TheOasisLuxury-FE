@@ -22,6 +22,8 @@ const CreateTimeShareDialog = ({ open, handleClose, setTimeShares, timeshares })
     setNewTimeShare({ ...newTimeShare, [prop]: event.target.value });
   };
 
+ 
+
 
 
   const handleAdd = async () => {
