@@ -148,7 +148,15 @@ export default function OrderTable() {
                 {Array.isArray(filteredOrders) && filteredOrders.map((order, index) => (
                   <TableRow key={order._id}>
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>{order.order_name || 'N/A'}</TableCell>
+                    <TableCell 
+                    style={{
+                      maxWidth: 150,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}
+                    title={order.order_name || 'N/A'}
+                    align="left" >{order.order_name || 'N/A'}</TableCell>
 
                     <TableCell align="left">
                       {order.start_date
