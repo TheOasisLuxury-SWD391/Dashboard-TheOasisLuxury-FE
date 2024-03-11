@@ -59,13 +59,17 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
     const handleUpdate = async () => {
         try {
             const token = localStorage.getItem('token');
+            
+            const villaData = { ...editVilla };
+            delete villaData._id; // Loại bỏ _id từ dữ liệu được gửi đi
+
             const response = await fetch(`http://localhost:5000/api/v1/villas/${editVilla._id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(editVilla),
+                body: JSON.stringify(villaData),
             });
     
             if (response.ok) {
