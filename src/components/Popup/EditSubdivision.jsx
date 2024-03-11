@@ -126,6 +126,16 @@ function EditSubdivisionDialog({
             ))}
           </Select>
         </FormControl> */}
+          <TextField
+                    margin="dense"
+                    id="url_image"
+                    label="Image"
+                    type="text"
+                    fullWidth
+                    value={editSubdivision?.url_image}
+                    onChange={handleEditChange('url_image')}
+                    size="small"
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCloseEditDialog}>Cancel</Button>
