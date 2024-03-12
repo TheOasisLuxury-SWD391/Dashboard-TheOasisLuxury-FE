@@ -61,7 +61,8 @@ export default function SubdivisionTable() {
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5); 
 
   useEffect(() => {
     fetchSubdivisions();
@@ -255,6 +256,26 @@ export default function SubdivisionTable() {
   const handleDeleteClick = (accountId) => {
     handleOpenConfirmDelete(accountId);
   };
+  const totalPages = Math.ceil(filteredSubdivisions.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredSubdivisions.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
 
 
 
@@ -345,7 +366,7 @@ export default function SubdivisionTable() {
               </TableHead>
               <TableBody>
 
-                {filteredSubdivisions.map((subdivision, index) => {
+                {currentItems.map((subdivision, index) => {
                   const project = projects.find(p => p._id === subdivision.project_id);
                   return (
                     <TableRow key={subdivision._id}>
@@ -390,6 +411,13 @@ export default function SubdivisionTable() {
             </Table>
           </TableContainer>
         </Paper>
+      </div>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+        ))}
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
       </div>
       <ToastContainer />
     </Container>

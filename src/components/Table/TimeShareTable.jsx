@@ -56,6 +56,8 @@ export default function TimeShareTable() {
     // const [searchTerm, setSearchTerm] = useState('');
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [accountIdToDelete, setAccountIdToDelete] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5); 
     useEffect(() => {
         fetchTimeShares();
     }, []);
@@ -214,7 +216,26 @@ export default function TimeShareTable() {
     const handleDeleteClick = (accountId) => {
         handleOpenConfirmDelete(accountId);
     };
-
+    const totalPages = Math.ceil(filteredTimeShares.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredTimeShares.slice(indexOfFirstItem, indexOfLastItem);
+  
+    const handleNextPage = () => {
+      if (currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+      }
+    };
+  
+    const handlePrevPage = () => {
+      if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+    };
+  
+    const goToPage = (page) => {
+      setCurrentPage(page);
+    };
     return (
 
         <Container maxWidth="md" sx={{}}>
@@ -298,7 +319,7 @@ export default function TimeShareTable() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {filteredTimeShares.map((timeshare, index) => (
+                                {currentItems.map((timeshare, index) => (
                                     <TableRow key={timeshare._id}>
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell 
@@ -351,6 +372,13 @@ export default function TimeShareTable() {
                     </TableContainer>
                 </Paper>
             </div>
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+        ))}
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
+      </div>
             <ToastContainer />
         </Container>
     );

@@ -66,6 +66,11 @@ export const SidebarData = [
     icon: UilClipboardAlt,
     heading: 'Contracts',
     roles: ['ADMIN'],
+  },{ 
+    path: '/blogs',
+    icon: UilClipboardAlt,
+    heading: 'Blog',
+    roles: ['ADMIN'],
   },
 ];
 

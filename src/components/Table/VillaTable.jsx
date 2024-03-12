@@ -68,7 +68,8 @@ export default function VillaTable() {
     const [subdivisions, setSubdivisions] = useState([]);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [accountIdToDelete, setAccountIdToDelete] = useState(null);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5); 
     useEffect(() => {
         fetchVillas();
     }, []);
@@ -360,6 +361,28 @@ export default function VillaTable() {
     const filteredVillas = villas.filter(villa =>
         villa.villa_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    const totalPages = Math.ceil(filteredVillas.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredVillas.slice(indexOfFirstItem, indexOfLastItem);
+  
+    const handleNextPage = () => {
+      if (currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+      }
+    };
+  
+    const handlePrevPage = () => {
+      if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+    };
+  
+    const goToPage = (page) => {
+      setCurrentPage(page);
+    };
+  
+  
     return (
 
         <Container maxWidth="md" sx={{}}>
@@ -427,9 +450,9 @@ export default function VillaTable() {
           </Button>
         </DialogActions>
       </Dialog>
-            <div style={{ padding: '16px', width: '100%' }}>
+            <div style={{ padding: '8px', width: '100%' }}>
                 <Paper sx={{ width: '130%', overflow: 'hidden' }}>
-                    <TableContainer sx={{ maxHeight: 700 }}>
+                    <TableContainer sx={{ maxHeight: 550 }}>
                         <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
@@ -450,7 +473,7 @@ export default function VillaTable() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {filteredVillas.map((villa, index) => {
+                                {currentItems.map((villa, index) => {
                                     const subdivision = subdivisions.find(p => p._id === villa.subdivision_id);
                                     // console.log('villa?.timeShareDetails?.result?.start_date',villa?.timeShareDetails?.result?.start_date);
                                     return (
@@ -555,6 +578,13 @@ export default function VillaTable() {
                     </TableContainer>
                 </Paper>
             </div>
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+        ))}
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
+      </div>
             <ToastContainer />
         </Container>
     );

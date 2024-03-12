@@ -84,7 +84,29 @@ export default function ContractTable() {
     // Use the navigate function to navigate to the details page
     navigate(`/details/${contractId}`);
   };
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5); 
+
+const totalPages = Math.ceil(filteredContracts.length / itemsPerPage);
+const indexOfLastItem = currentPage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+const currentItems = filteredContracts.slice(indexOfFirstItem, indexOfLastItem);
+
+const handleNextPage = () => {
+  if (currentPage < totalPages) {
+    setCurrentPage(currentPage + 1);
+  }
+};
+
+const handlePrevPage = () => {
+  if (currentPage > 1) {
+    setCurrentPage(currentPage - 1);
+  }
+};
+
+const goToPage = (page) => {
+  setCurrentPage(page);
+};
   return (
 
     <Container maxWidth="md" sx={{}} className=''>
@@ -134,7 +156,7 @@ export default function ContractTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(filteredContracts) && filteredContracts.map((contract, index) => {
+                {Array.isArray(currentItems) && currentItems.map((contract, index) => {
                   return (
                     <TableRow key={contract._id}>
                       <TableCell>{index + 1}</TableCell>
@@ -177,6 +199,13 @@ export default function ContractTable() {
           </TableContainer>
 
         </Paper>
+      </div>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+        ))}
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
       </div>
       <ToastContainer />
     </Container>
