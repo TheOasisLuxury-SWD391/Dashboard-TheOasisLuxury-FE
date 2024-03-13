@@ -17,7 +17,7 @@ export const SidebarData = [
     path: '/',
     icon: UilEstate,
     heading: "Dashboard",
-    roles: ['ADMIN', 'STAFF'],
+    roles: ['ADMIN'],
   },
   { 
     path: '/orders',
@@ -59,12 +59,12 @@ export const SidebarData = [
     path: '/contracts',
     icon: UilClipboardAlt,
     heading: 'Contracts',
-    roles: ['ADMIN'],
+    roles: ['ADMIN', 'STAFF'],
   },{ 
     path: '/blogs',
     icon: UilClipboardAlt,
     heading: 'Blog',
-    roles: ['ADMIN'],
+    roles: ['ADMIN','STAFF'],
   },
 ];
 
