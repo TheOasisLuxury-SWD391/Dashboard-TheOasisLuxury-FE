@@ -2,30 +2,37 @@ import React from 'react';
 import { useState, useEffect } from "react";
 import {
   IconButton,
+  Button,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Dialog,
   TableHead,
   TableRow,
   Tooltip,
   Container,
   Box,
-  Button,
-  Typography
+  Typography,
+  DialogContentText,
+  TextField
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import DetailsIcon from '@mui/icons-material/Details';
 export default function ContractTable() {
 
   const [contracts, setContracts] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     fetchContracts();
@@ -84,6 +91,53 @@ export default function ContractTable() {
     // Use the navigate function to navigate to the details page
     navigate(`/details/${contractId}`);
   };
+  const handleOpenConfirmDelete = (accountId) => {
+    setAccountIdToDelete(accountId);
+    setConfirmDelete(true);
+  };
+
+  const handleCloseConfirmDelete = () => {
+    setConfirmDelete(false);
+  };
+
+  const handleDeleteClick = (accountId) => {
+    handleOpenConfirmDelete(accountId);
+  };
+  const handleDelete = async (contractId) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        console.error("Token is missing. Unable to delete contract.");
+        return;
+      }
+
+      const response = await fetch(`http://localhost:5000/api/v1/contracts/${contractId}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        fetchContracts();
+        console.log("Contract deleted successfully");
+        toast.success("Contract deleted successfully");
+      } else {
+
+        if (response.status === 401 || response.status === 403) {
+          console.error("Unauthorized: Check if the provided token is valid.");
+        } else {
+
+          const errorMessage = await response.text();
+          console.error(`Failed to delete Contract. Server response: ${errorMessage}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting order:", error.message);
+      toast.error("Error deleting order");
+    }
+  };
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5); 
 
@@ -138,7 +192,30 @@ const startNumber = (currentPage - 1) * itemsPerPage + 1;
 
         />
       </Box>
-
+      <Dialog
+        open={confirmDelete}
+        onClose={handleCloseConfirmDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc muốn xóa không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => {
+            handleDelete(accountIdToDelete);
+            handleCloseConfirmDelete();
+          }} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div style={{ padding: '8px', width: '100%' }}>
         <Paper sx={{ width: '130%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 600 }}>
@@ -154,6 +231,7 @@ const startNumber = (currentPage - 1) * itemsPerPage + 1;
                   <TableCell align="center">Signature</TableCell>
                   <TableCell align="center">Status</TableCell>
                   <TableCell align="center">Details</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -187,11 +265,18 @@ const startNumber = (currentPage - 1) * itemsPerPage + 1;
                         <span className="status" style={makeStyle(contract.status || '')}>{contract.status || ''}</span>
                       </TableCell>
                       <TableCell align="center">
-                        <Button onClick={() => handleDetailsClick(contract._id)}>
+                   <div className="flex">
+                   <Button onClick={() => handleDetailsClick(contract._id)}>
                           Detail
                         </Button>
+                   
+                      </div>
                       </TableCell>
-
+                      <TableCell align="center">
+                      <div className="flex">
+                        <IconButton onClick={() => handleDeleteClick(contract._id)}><DeleteIcon /></IconButton>
+                      </div>
+                    </TableCell>
                     </TableRow>
                   );
                 })}
