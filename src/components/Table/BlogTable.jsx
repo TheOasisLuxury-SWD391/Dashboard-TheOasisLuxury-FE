@@ -183,6 +183,7 @@ export default function BlogTable() {
     const goToPage = (page) => {
       setCurrentPage(page);
     };
+    const startNumber = (currentPage - 1) * itemsPerPage + 1;
     return (
         <Container maxWidth="md" sx={{}} className=''>
             <Typography variant="h6">Blog List</Typography>
@@ -255,6 +256,7 @@ export default function BlogTable() {
                                 <TableRow>
                                     <TableCell>No.</TableCell>
                                     <TableCell>Title</TableCell>
+                                    <TableCell align="center">Image</TableCell>
                                     <TableCell>Description</TableCell>
                                     <TableCell>InsertDate</TableCell>
                                     <TableCell>UpdateDate</TableCell>
@@ -265,8 +267,9 @@ export default function BlogTable() {
                             <TableBody>
                                 {Array.isArray(currentItems) && currentItems.map((blog, index) => (
                                     <TableRow key={blog._id}>
-                                        <TableCell>{index + 1}</TableCell>
+                                        <TableCell>{startNumber + index}</TableCell>
                                         <TableCell align="left">{blog.title || 'N/A'}</TableCell>
+                                        <TableCell align="left"><img src={blog.url_image}/></TableCell>
                                         <TableCell align="left">{blog.description_detail || 'N/A'}</TableCell>
                                         <TableCell align="left">
                                             {blog.insert_date

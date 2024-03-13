@@ -107,6 +107,7 @@ const handlePrevPage = () => {
 const goToPage = (page) => {
   setCurrentPage(page);
 };
+const startNumber = (currentPage - 1) * itemsPerPage + 1;
   return (
 
     <Container maxWidth="md" sx={{}} className=''>
@@ -159,7 +160,7 @@ const goToPage = (page) => {
                 {Array.isArray(currentItems) && currentItems.map((contract, index) => {
                   return (
                     <TableRow key={contract._id}>
-                      <TableCell>{index + 1}</TableCell>
+                       <TableCell>{startNumber + index}</TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>{contract.contract_name || 'N/A'}</TableCell>
                       <TableCell align="left">
                         {contract.insert_date

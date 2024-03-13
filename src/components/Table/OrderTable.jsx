@@ -67,6 +67,7 @@ export default function OrderTable() {
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const [editOrder, setEditOrder] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false); // Define openEditDialog state here
+  const startNumber = (currentPage - 1) * itemsPerPage + 1;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -252,7 +253,7 @@ export default function OrderTable() {
               <TableBody>
                 {Array.isArray(currentItems) && currentItems.map((order, index) => (
                   <TableRow key={order._id}>
-                    <TableCell>{index + 1}</TableCell>
+                     <TableCell>{startNumber + index}</TableCell>
                     <TableCell
                       style={{
                         maxWidth: 150,
