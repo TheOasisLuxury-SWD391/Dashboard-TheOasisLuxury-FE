@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 const Card = () => {
   const [payments, setPayments] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  console.log('payments',payments);
 
   useEffect(() => {
     fetchPayments();
@@ -37,6 +38,7 @@ const Card = () => {
         total += payment.amount;
       }
     });
+    
     setTotalAmount(total);
   };
 
@@ -46,9 +48,9 @@ const Card = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto ml-24 w-11/12 ">
       <div style={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'purple', padding: '40px', borderRadius: '5px' }}>
-        <h1 className="text-white font-bold mb-4 text-xl">Revenue</h1>
+        <h1 className="text-white font-bold mb-4 text-xl">Revenue Order Completed</h1>
         <h2 className="text-white font-bold mt-4 text-xl">Total Amount: {formatCurrency(totalAmount)}</h2>
       </div>
     </div>

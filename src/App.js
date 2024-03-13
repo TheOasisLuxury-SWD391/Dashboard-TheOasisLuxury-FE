@@ -97,10 +97,12 @@ function App() {
                 {role === 'STAFF' && (
                   <>
                    <Route path="/" element={<MainDash />} />
+                    <Route path="/orders" element={<OrdersPage />} />
                     <Route path="/subdivisions" element={<SubdivisionPage />} />
                     <Route path="/projects" element={<ProjectPage />} />
                     <Route path="/villas" element={<VillaPage />} />
                     <Route path="/timeshares" element={<TimeSharePage />} />
+                    <Route path="/blogs" element={<BlogPage />} />
                   </>
                 )}
                 <Route path="/details/:contractId" element={<DetailsPage />} />

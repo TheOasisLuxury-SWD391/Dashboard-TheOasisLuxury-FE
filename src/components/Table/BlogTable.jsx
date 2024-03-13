@@ -28,6 +28,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CreateBlogDialog from '../Popup/CreateBlog';
+import axios from 'axios';
 export default function BlogTable() {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
@@ -41,6 +42,31 @@ export default function BlogTable() {
         description_detail:''
     });
     const [editBlog, setEditBlog] = useState(null);
+    const [role, setRole] = useState("");
+    const userId = localStorage.getItem("user_id");
+    const accessToken = localStorage.getItem("token");
+    console.log('role',role);
+  
+  
+    useEffect(() => {
+      if (userId && accessToken) { 
+        axios.get(`http://localhost:5000/api/v1/users/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        }).then((res) => {
+          console.log("role",role);
+          const userRole = res.data.user.role_name;
+          setRole(userRole);
+          console.log('Login successful');
+          toast.success("Login successful");
+        }).catch((err) => {
+          console.error(err);
+          toast.error("Login failed");
+        });
+      }
+    }, [userId, accessToken]); 
+    
     
     const handleOpenEditDialog = (blog) => {
         setEditBlog(blog);
@@ -261,7 +287,9 @@ export default function BlogTable() {
                                     <TableCell>InsertDate</TableCell>
                                     <TableCell>UpdateDate</TableCell>
                                     <TableCell>Deflag</TableCell>
+                                    {role === 'STAFF' && (
                                     <TableCell>Action</TableCell>
+                                    )}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -269,7 +297,16 @@ export default function BlogTable() {
                                     <TableRow key={blog._id}>
                                         <TableCell>{startNumber + index}</TableCell>
                                         <TableCell align="left">{blog.title || 'N/A'}</TableCell>
-                                        <TableCell align="left"><img src={blog.url_image}/></TableCell>
+                                        <TableCell align="left">
+                                            <img 
+                                                style={{
+                                                    width: '100%', // Ensure the image takes full width
+                                                    height: '150px', // Maintain aspect ratio
+                                                    objectFit: 'cover',
+                                                    margin:'10px'
+                                                }}
+                                                src={blog.url_image}/>
+                                        </TableCell>
                                         <TableCell align="left">{blog.description_detail || 'N/A'}</TableCell>
                                         <TableCell align="left">
                                             {blog.insert_date
@@ -290,12 +327,13 @@ export default function BlogTable() {
                                                 : 'N/A'}
                                         </TableCell>
                                         <TableCell align="left">{blog.deflag || 'false'}</TableCell>
-
-                                        <TableCell align="center">
-                                            <div className="flex">
-                                                <IconButton onClick={() => handleDeleteClick(blog._id)}><DeleteIcon /></IconButton>
-                                            </div>
-                                        </TableCell>
+                                        {role === 'STAFF' && (
+                                            <TableCell align="center">
+                                                <div className="flex">
+                                                    <IconButton onClick={() => handleDeleteClick(blog._id)}><DeleteIcon /></IconButton>
+                                                </div>
+                                            </TableCell>
+                                        )}
                                     </TableRow>
                                 ))}
                             </TableBody>
