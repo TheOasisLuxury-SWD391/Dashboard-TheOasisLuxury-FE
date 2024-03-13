@@ -1,16 +1,9 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainDash from './components/MainDash/MainDash';
-import RightSide from './components/RigtSide/RightSide';
 import Sidebar from './components/Sidebar';
 import '../src/style/index.css';
-
-// Giả sử bạn đã tạo các trang này
-// import DashboardPage from './pages/DashboardPage';
-
 import SubdivisionPage from './pages/subdivision';
-import AnalyticPage from './pages/analytic';
-
 import OrdersPage from './pages/order';
 import ProjectPage from './pages/project';
 import { useEffect, useState } from 'react';

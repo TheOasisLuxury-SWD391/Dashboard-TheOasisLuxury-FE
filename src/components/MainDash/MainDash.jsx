@@ -1,12 +1,14 @@
 import React from "react";
-import Cards from "../Cards/Cards";
+
 import Table from "../Table/Table";
 import "./MainDash.css";
+import YourComponent from "../Cards/card";
+import Card from "../Cards/card";
 const MainDash = () => {
   return (
     <div className="MainDash">
       <h1>Dashboard</h1>
-      <Cards />
+      <Card/>
       <Table />
     </div>
   );
