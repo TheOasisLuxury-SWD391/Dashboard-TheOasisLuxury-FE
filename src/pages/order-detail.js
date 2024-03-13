@@ -23,7 +23,7 @@ const OrderDetailsPage = () => {
         const token = localStorage.getItem('token');
         const response = await fetch(`http://localhost:5000/api/v1/orders/${orderId}`, {
           headers: {
-            'Authorization': `Bearer ${token}`, // Thêm token vào header
+            'Authorization': `Bearer ${token}`, 
           },
         });
         if (response.ok) {
@@ -41,30 +41,66 @@ const OrderDetailsPage = () => {
   }, [orderId]);
 
 
-  const handlePaid = async () => {
-    try {
-    
+
+const handlePaid = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`http://localhost:5000/api/v1/orders/${orderId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({ 
+        status: 'COMPLETED',
+        price: orderDetails.price, 
+        order_name: orderDetails.order_name 
+      })
+    });
+    if (response.ok) {
       console.log('Order marked as PAID successfully.');
       toast.success('Order marked as PAID successfully.');
-     
-    } catch (error) {
-      console.error('Error marking order as PAID:', error);
-      toast.error('Error marking order as PAID');
+      navigate('/order');
+    } else {
+      console.error('Failed to mark order as PAID:', response.status);
+      toast.error('Failed to mark order as PAID');
     }
-  };
+  } catch (error) {
+    console.error('Error marking order as PAID:', error);
+    toast.error('Error marking order as PAID');
+  }
+};
 
-  // Function to handle order cancellation
-  const handleCancelled = async () => {
-    try {
-      
+
+const handleCancelled = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`http://localhost:5000/api/v1/orders/${orderId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({ 
+        status: 'CANCELLED',
+        price: orderDetails.price, 
+        order_name: orderDetails.order_name 
+      })
+    });
+    if (response.ok) {
       console.log('Order cancelled successfully.');
       toast.success('Order cancelled successfully.');
-   
-    } catch (error) {
-      console.error('Error cancelling order:', error);
-      toast.error('Error cancelling order');
+      navigate('/order');
+    } else {
+      console.error('Failed to cancel order:', response.status);
+      toast.error('Failed to cancel order');
     }
-  };
+  } catch (error) {
+    console.error('Error cancelling order:', error);
+    toast.error('Error cancelling order');
+  }
+};
+
 
   return (
     <Box className='mt-40 ml-40'>

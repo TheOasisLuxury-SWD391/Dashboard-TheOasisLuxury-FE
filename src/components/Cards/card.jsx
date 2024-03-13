@@ -33,12 +33,14 @@ const Card = () => {
   const calculateTotalAmount = (payments) => {
     let total = 0;
     payments.forEach(payment => {
-      total += payment.amount;
+      if (payment.status === "PAID") { 
+        total += payment.amount;
+      }
     });
     setTotalAmount(total);
   };
 
-  // Hàm định dạng số tiền thành tiền Việt
+ 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   };

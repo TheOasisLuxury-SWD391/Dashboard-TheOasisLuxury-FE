@@ -216,10 +216,6 @@ export default function VillaTable() {
                 fetchVillas();
                 console.log("Villa update successfully");
                 toast.success("Villa updated successfully");
-                // Check if time_share_id exists and patch it if start_date and end_date were updated
-                // if (updatedVilla.time_share_id && editVilla.start_date && editVilla.end_date) {
-                //     patchTimeShare(updatedVilla.time_share_id, editVilla.start_date, editVilla.end_date);
-                // }
                 if (updatedVilla.time_share_id) {
                     const timeShareData = {
                         start_date: editVilla.start_date,
@@ -274,7 +270,7 @@ export default function VillaTable() {
 
             if (response.ok) {
                 console.log("TimeShare updated successfully");
-                fetchVillas(); // Refresh the villas to show the updated time share data
+                fetchVillas(); 
                 toast.success("TimeShare updated successfully");
             } else {
                 console.error("Failed to update TimeShare");
@@ -513,7 +509,6 @@ export default function VillaTable() {
                                                 }}
                                                 title={villa.address}>{villa.address || 'N/A'}</TableCell>
                                             <TableCell key={subdivision?._id} value={subdivision?._id} align="left">{subdivision?.subdivision_name}</TableCell>
-                                            {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{villa.address || 'N/A'}</TableCell> */}
                                             <TableCell
                                                 align="left"
                                                 style={{
