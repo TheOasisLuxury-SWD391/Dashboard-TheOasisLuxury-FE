@@ -11,6 +11,7 @@ import {
     Select,
     MenuItem,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseEditDialog }) {
     const [subdivisions, setSubdivisions] = useState([]);
@@ -61,7 +62,7 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
             const token = localStorage.getItem('token');
             
             const villaData = { ...editVilla };
-            delete villaData._id; // Loại bỏ _id từ dữ liệu được gửi đi
+            delete villaData._id; 
 
             const response = await fetch(`http://localhost:5000/api/v1/villas/${editVilla._id}`, {
                 method: 'PATCH',
@@ -75,13 +76,11 @@ function EditVillaDialog({ editVilla, setEditVilla, openEditDialog, handleCloseE
             if (response.ok) {
                 const updatedVilla = await response.json();
                 console.log("Villa updated successfully");
-    
-                // Cập nhật danh sách villas trong UI, nếu cần
-                // setVillas((prevVillas) => prevVillas.map((villa) => villa._id === updatedVilla._id ? updatedVilla : villa));
-    
+                toast.success("Villa updated successfully")
                 handleCloseEditDialog();
             } else {
                 console.error("Failed to update villa");
+                toast.error("Failed to update villa")
             }
         } catch (error) {
             console.error("Error updating villa:", error);
