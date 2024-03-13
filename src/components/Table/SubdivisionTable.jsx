@@ -279,7 +279,7 @@ export default function SubdivisionTable() {
 
 
 
-
+  const startNumber = (currentPage - 1) * itemsPerPage + 1;
   return (
 
     <Container maxWidth="md" sx={{}}>
@@ -370,7 +370,7 @@ export default function SubdivisionTable() {
                   const project = projects.find(p => p._id === subdivision.project_id);
                   return (
                     <TableRow key={subdivision._id}>
-                      <TableCell>{index + 1}</TableCell>
+                       <TableCell>{startNumber + index}</TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.subdivision_name || 'N/A'}</TableCell>
                       <TableCell align="left"><img src={subdivision.url_image}/></TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.location || 'N/A'}</TableCell>

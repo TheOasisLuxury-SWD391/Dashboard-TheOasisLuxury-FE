@@ -236,6 +236,7 @@ export default function TimeShareTable() {
     const goToPage = (page) => {
       setCurrentPage(page);
     };
+    const startNumber = (currentPage - 1) * itemsPerPage + 1;
     return (
 
         <Container maxWidth="md" sx={{}}>
@@ -321,7 +322,7 @@ export default function TimeShareTable() {
                             <TableBody>
                                 {currentItems.map((timeshare, index) => (
                                     <TableRow key={timeshare._id}>
-                                        <TableCell>{index + 1}</TableCell>
+                                         <TableCell>{startNumber + index}</TableCell>
                                         <TableCell 
                                             align="left"  
                                             style={{

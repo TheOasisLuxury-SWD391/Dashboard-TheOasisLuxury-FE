@@ -239,7 +239,7 @@ export default function ProjectTable() {
   const goToPage = (page) => {
     setCurrentPage(page);
   };
-
+  const startNumber = (currentPage - 1) * itemsPerPage + 1;
   return (
     <Container maxWidth="md" className="">
       {/* <h3>Project List</h3> */}
@@ -328,7 +328,7 @@ export default function ProjectTable() {
               <TableBody style={{ color: "white" }}>
               {Array.isArray(currentItems) && currentItems.map((project, index) => (
                   <TableRow key={project._id}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{startNumber + index}</TableCell>
                     {/* <TableCell component="th" scope="row">
                     {project._id || 'N/A'}
                   </TableCell> */}

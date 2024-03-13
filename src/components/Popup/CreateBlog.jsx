@@ -1,25 +1,13 @@
-// CreateProjectDialog.js
-
 import React, { useState } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    Button,
-    DialogActions,
-    TextField,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-} from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, Button, DialogActions, TextField } from "@mui/material";
 import { toast } from "react-toastify";
 
-const CreateBlogDialog = ({ open, handleClose, handleInputChange, setBlogs, blogs }) => {
+const CreateBlogDialog = ({ open, handleClose, setBlogs, blogs }) => {
     const [newBlog, setNewBlog] = useState({
-        user_id: '',
-        title:'',
-        description_detail:''
+        user_id: localStorage.getItem('user_id'), 
+        title: '',
+        description_detail: '',
+        url_image: '',
     });
 
     const handleChange = (prop) => (event) => {
@@ -37,7 +25,7 @@ const CreateBlogDialog = ({ open, handleClose, handleInputChange, setBlogs, blog
                 },
                 body: JSON.stringify(newBlog),
             });
-    
+
             if (response.ok) {
                 const addedBlog = await response.json();
                 setBlogs([...blogs, addedBlog]); // Update the state
@@ -50,11 +38,10 @@ const CreateBlogDialog = ({ open, handleClose, handleInputChange, setBlogs, blog
             }
         } catch (error) {
             console.error("Error adding Blog:", error);
-            toast.success("Blog added successfully");
+            toast.error("Blog added successfully");
         }
         handleClose();
     };
-    
 
     return (
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
@@ -62,12 +49,12 @@ const CreateBlogDialog = ({ open, handleClose, handleInputChange, setBlogs, blog
             <DialogContent>
                 <TextField
                     margin="dense"
-                    id="user_id"
-                    label="User ID"
+                    id="title"
+                    label="Title"
                     type="text"
                     fullWidth
-                    value={newBlog.user_id}
-                    onChange={handleChange('user_id')}
+                    value={newBlog.title}
+                    onChange={handleChange('title')}
                 />
                 <TextField
                     margin="dense"
@@ -78,16 +65,15 @@ const CreateBlogDialog = ({ open, handleClose, handleInputChange, setBlogs, blog
                     value={newBlog.description_detail}
                     onChange={handleChange('description_detail')}
                 />
-               <TextField
+                <TextField
                     margin="dense"
-                    id="title"
-                    label="title"
+                    id="url_image"
+                    label="URL Image"
                     type="text"
                     fullWidth
-                    value={newBlog.title}
-                    onChange={handleChange('title')}
+                    value={newBlog.url_image}
+                    onChange={handleChange('url_image')}
                 />
-             
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary">

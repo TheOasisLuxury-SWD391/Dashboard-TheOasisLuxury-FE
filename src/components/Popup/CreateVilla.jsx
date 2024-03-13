@@ -11,6 +11,7 @@ import {
     Select,
     MenuItem,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
     const [newVilla, setNewVilla] = useState({
@@ -23,7 +24,7 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
         subdivision_name: '',
         start_date: '',
         end_date: '',
-        url_image: [''], // Thêm trường mới
+        url_image: [''], 
     });
 
 
@@ -45,8 +46,7 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
 
             if (response.ok) {
                 const addedVilla = await response.json();
-                // console.log('addedVilla',addedVilla);
-                // Thêm dữ liệu hình ảnh vào villa mới
+               
                 addedVilla.url_image = newVilla.url_image;
                 setVillas([...villas, addedVilla]);
                 const villaId = addedVilla._id;
@@ -55,12 +55,14 @@ const CreateVillaDialog = ({ open, handleClose, setVillas, villas }) => {
                 // Gọi API để cập nhật subdivision
                 await updateSubdivision(subdivisionId, villaId, token);
                 console.log("Villa added successfully");
-
+                toast.success("Villa added successfully")
             } else {
                 console.error("Failed to add Villa");
+                toast.error("Failed to add Villa")
             }
         } catch (error) {
             console.error("Error adding villa:", error);
+            toast.success("Villa added successfully")
         }
         handleClose();
     };

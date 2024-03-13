@@ -225,7 +225,7 @@ export default function AccountTable() {
   const goToPage = (page) => {
     setCurrentPage(page);
   };
-
+  const startNumber = (currentPage - 1) * itemsPerPage + 1;
   return (
     <Container maxWidth="md">
       <Typography variant="h6">Account List</Typography>
@@ -319,7 +319,7 @@ export default function AccountTable() {
               <TableBody>
                 {Array.isArray(currentItems) && currentItems.map((account, index) => (
                   <TableRow key={account._id}>
-                    <TableCell>{index + 1}</TableCell>
+                     <TableCell>{startNumber + index}</TableCell>
                     <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>{account.full_name || 'N/A'}</TableCell>
                     <TableCell align="left">
                       {account.birthday

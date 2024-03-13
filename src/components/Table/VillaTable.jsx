@@ -382,7 +382,7 @@ export default function VillaTable() {
       setCurrentPage(page);
     };
   
-  
+    const startNumber = (currentPage - 1) * itemsPerPage + 1; 
     return (
 
         <Container maxWidth="md" sx={{}}>
@@ -478,7 +478,7 @@ export default function VillaTable() {
                                     // console.log('villa?.timeShareDetails?.result?.start_date',villa?.timeShareDetails?.result?.start_date);
                                     return (
                                         <TableRow key={villa._id}>
-                                            <TableCell>{index + 1}</TableCell>
+                                           <TableCell>{startNumber + index}</TableCell>
                                             <TableCell align="left">
                                                 {Array.isArray(villa.url_image) && villa.url_image.map((url, index) => (
                                                     <div key={index}>
