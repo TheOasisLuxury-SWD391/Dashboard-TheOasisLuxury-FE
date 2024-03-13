@@ -112,7 +112,7 @@ export default function ContractTable() {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/api/v1/contracts/${contractId}`, {
+      const response = await fetch(`http://localhost:5000/api/v1/users/contracts/${contractId}`, {
         method: "DELETE",
         headers: {
           'Authorization': `Bearer ${token}`,
