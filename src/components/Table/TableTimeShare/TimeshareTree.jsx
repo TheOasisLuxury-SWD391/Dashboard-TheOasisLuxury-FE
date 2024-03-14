@@ -36,18 +36,18 @@ const TimeShareRow = ({ timeshare, level = 0, index }) => {
 
     const hasChildren = timeshare.time_share_child && timeshare.time_share_child.length > 0;
     const makeStyle = (status) => {
-        if (status === 'ACTIVE') {
-            return {
-                background: 'rgb(145 254 159 / 47%)',
-                color: 'green',
-            }
-        }
-        else if (status === 'INACTIVE') {
-            return {
-                background: '#ffadad8f',
-                color: 'red',
-            }
-        }
+        // if (status === 'TRUE') {
+        //     return {
+        //         background: 'rgb(145 254 159 / 47%)',
+        //         color: 'green',
+        //     }
+        // }
+        // else if (status === 'FALSE') {
+        //     return {
+        //         background: '#ffadad8f',
+        //         color: 'red',
+        //     }
+        // }
     }
     const handleOpenEditDialog = (timeshare) => {
         setEditTimeShare(timeshare);
@@ -95,9 +95,9 @@ const TimeShareRow = ({ timeshare, level = 0, index }) => {
                 </TableCell>
 
                 <TableCell align="left">
-                    <span className="deflag" style={makeStyle(timeshare.deflag || 'FALSE')}>{timeshare.deflag || 'FALSE'}</span>
+                    <span className="deflag" style={makeStyle(timeshare.deflag  || 'FALSE')}>{timeshare.deflag ? 'Đã có người mua' : 'Còn trống' || 'FALSE'}</span>
                 </TableCell>
-                <TableCell align="center">{timeshare.time_share_type || '0'}</TableCell>
+                {/* <TableCell align="center">{timeshare.time_share_type || '0'}</TableCell> */}
                 {role === 'ADMIN' && (
                     <TableCell align="center">
                         <div className="flex">

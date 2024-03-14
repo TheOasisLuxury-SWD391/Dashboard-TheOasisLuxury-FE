@@ -327,7 +327,7 @@ export default function TimeShareTable() {
                                     <TableCell>StartDate</TableCell>
                                     <TableCell>EndDate</TableCell>
                                     <TableCell>Deflag</TableCell>
-                                    <TableCell align="center">Type</TableCell>
+                                    {/* <TableCell align="center">Type</TableCell> */}
                                     {role === 'ADMIN' && (
                                         <TableCell align="left">Actions</TableCell>
                                     )}
