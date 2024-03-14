@@ -255,7 +255,7 @@ export default function ContractTable() {
                   <TableCell>Name</TableCell>
                   <TableCell>InsertDate</TableCell>
                   <TableCell>UpdateDate</TableCell>
-                  <TableCell>Deflag</TableCell>
+                  {/* <TableCell>Deflag</TableCell> */}
 
                   <TableCell align="center">Signature</TableCell>
                   <TableCell align="center">Status</TableCell>
@@ -289,7 +289,7 @@ export default function ContractTable() {
                           })
                           : 'N/A'}
                       </TableCell>
-                      <TableCell align="left">{contract.deflag || 'false'}</TableCell>
+                      {/* <TableCell align="left">{contract.deflag || 'false'}</TableCell> */}
 
                       <TableCell align="left">{contract.sign_contract ? 'Đã Ký' : 'Chưa Ký' || 'false'}</TableCell>
                       <TableCell align="center">
