@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import ConfirmDialog from '../components/Modal/Modal';
+import axios from 'axios';
 
 const formatter = value => `${value} VND`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
@@ -37,6 +38,27 @@ const OrderDetailsPage = ({ value }) => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [countdown, setCountdown] = useState(null);
+  const [role, setRole] = useState("");
+  const userId = localStorage.getItem("user_id");
+  const accessToken = localStorage.getItem("token");
+  console.log('role', role);
+
+
+  useEffect(() => {
+    if (userId && accessToken) {
+      axios.get(`http://localhost:5000/api/v1/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }).then((res) => {
+        console.log("role", role);
+        const userRole = res.data.user.role_name;
+        setRole(userRole);
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
+  }, [userId, accessToken]);
 
   useEffect(() => {
     console.log('order ID:', orderId);
@@ -124,7 +146,7 @@ const OrderDetailsPage = ({ value }) => {
       if ( responsePayment.ok) {
         console.log('Order marked as PAID successfully.');
         toast.success('Order marked as PAID successfully.');
-        navigate('/order');
+        navigate('/orders');
       } else {
         console.error('Failed to mark order as PAID:', responsePayment.status);
         toast.error('Failed to mark order as PAID');
@@ -181,7 +203,7 @@ const OrderDetailsPage = ({ value }) => {
           Back
         </button>
       </div>
-      {orderDetails ? (
+      {orderDetails && role ? (
 
         <div className="p-8 bg-white shadow-md rounded w-3/4 mx-auto ">
           {/* Logo and company info here */}
@@ -265,7 +287,7 @@ const OrderDetailsPage = ({ value }) => {
                 {orderDetails.status === "CANCELLED" && "ĐÃ HUỶ"}
               </p>
             </div>
-            {orderDetails.status === "PENDING" && (
+            {orderDetails.status === "PENDING" && role === 'ADMIN' && (
               <Box mt={8}>
                 <Grid container spacing={8}>
                   <Grid item>
@@ -284,7 +306,7 @@ const OrderDetailsPage = ({ value }) => {
             )}
 {/* nếu ỏder có payment là pending */}
 
-            {orderDetails.status === "CONFIRMED" && (
+            {orderDetails.status === "CONFIRMED" && role === 'ADMIN'  && (
               <Box mt={8}>
                 <Grid container spacing={8}>
                   <Grid item>
@@ -303,12 +325,12 @@ const OrderDetailsPage = ({ value }) => {
             )}
 {/* nếu ỏder có payment là paid */}
 
-            {orderDetails.status === "COMPLETED" && (
+            {orderDetails.status === "COMPLETED" && role === 'ADMIN'  && (
               <Grid container >
                 <Button className='mt-4' variant="contained" color="primary" disabled='true' onClick={handlePaid}>ĐÃ NHẬN ĐƯỢC TIỀN</Button>
               </Grid>
             )}
-            {orderDetails.status === "CANCELLED" && (
+            {orderDetails.status === "CANCELLED" && role === 'ADMIN'  && (
               <Grid container >
                 <Button className='mt-4' variant="contained" color="primary" disabled='true' onClick={handlePaid}>ĐÃ HUỶ</Button>
               </Grid>

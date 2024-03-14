@@ -38,6 +38,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 import SearchIcon from '@mui/icons-material/Search';
+import axios from "axios";
 export default function ProjectTable() {
 
   const makeStyle = (status) => {
@@ -70,7 +71,29 @@ export default function ProjectTable() {
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); 
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [role, setRole] = useState("");
+  const userId = localStorage.getItem("user_id");
+  const accessToken = localStorage.getItem("token");
+  console.log('role', role);
+
+
+  useEffect(() => {
+    if (userId && accessToken) {
+      axios.get(`http://localhost:5000/api/v1/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }).then((res) => {
+        console.log("role", role);
+        const userRole = res.data.user.role_name;
+        setRole(userRole);
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
+  }, [userId, accessToken]);
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -214,7 +237,7 @@ export default function ProjectTable() {
     }
     handleClose();
   };
- 
+
   const filteredProjects = projects.filter(project =>
     project.project_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
     project.description.toLowerCase().includes(searchKeyword.toLowerCase())
@@ -245,24 +268,24 @@ export default function ProjectTable() {
       {/* <h3>Project List</h3> */}
       <Typography variant="h6">Project List</Typography>
       <Box display="flex" justifyContent="flex-start" mb={2} >
-      <TextField
-  label="Search"
-  variant="outlined"
-  value={searchKeyword}
-  onChange={(e) => setSearchKeyword(e.target.value)}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <SearchIcon style={{ color: '#707070' }} />
-      </InputAdornment>
-    ),
-    style: { 
-      backgroundColor: 'white', 
-      borderRadius: '4px', 
-    },
-  }}
-  sx={{ width: '100%' }} 
-/>
+        <TextField
+          label="Search"
+          variant="outlined"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon style={{ color: '#707070' }} />
+              </InputAdornment>
+            ),
+            style: {
+              backgroundColor: 'white',
+              borderRadius: '4px',
+            },
+          }}
+          sx={{ width: '100%' }}
+        />
 
         <Tooltip title="Add New Project">
           <IconButton color="primary" onClick={handleClickOpen}>
@@ -271,11 +294,13 @@ export default function ProjectTable() {
         </Tooltip>
       </Box>
       {/* Dialog Tạo mới dự án */}
+      {role === 'ADMIN' && (
       <CreateProjectDialog
         open={openDialog}
         handleClose={() => setOpenDialog(false)}
         handleProjectAdd={handleAdd}
       />
+        )}
       {/* Dialog chỉnh sửa dự án */}
       <EditProjectDialog
         editProject={editProject}
@@ -284,7 +309,7 @@ export default function ProjectTable() {
         handleCloseEditDialog={handleCloseEditDialog}
         handleUpdate={handleUpdate}
       />
-        <Dialog
+      <Dialog
         open={confirmDelete}
         onClose={handleCloseConfirmDelete}
         aria-labelledby="alert-dialog-title"
@@ -311,7 +336,7 @@ export default function ProjectTable() {
       {/* Table Projects list */}
       <div style={{ padding: '12px', width: '100%' }}>
         <Paper sx={{ width: '130%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 600 }}>
+          <TableContainer sx={{ maxHeight: 600 }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -326,7 +351,7 @@ export default function ProjectTable() {
                 </TableRow>
               </TableHead>
               <TableBody style={{ color: "white" }}>
-              {Array.isArray(currentItems) && currentItems.map((project, index) => (
+                {Array.isArray(currentItems) && currentItems.map((project, index) => (
                   <TableRow key={project._id}>
                     <TableCell>{startNumber + index}</TableCell>
                     {/* <TableCell component="th" scope="row">
@@ -342,8 +367,10 @@ export default function ProjectTable() {
                     </TableCell>
                     <TableCell align="center">
                       <div className="flex">
-                      <IconButton onClick={() => handleOpenEditDialog(project)}><EditIcon /></IconButton>
-                      <IconButton onClick={() => handleDeleteClick(project._id)}><DeleteIcon /></IconButton>
+                        <IconButton onClick={() => handleOpenEditDialog(project)}><EditIcon /></IconButton>
+                        {role === 'ADMIN' && (
+                        <IconButton onClick={() => handleDeleteClick(project._id)}><DeleteIcon /></IconButton>
+                          )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -362,7 +389,7 @@ export default function ProjectTable() {
         <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
       </div>
 
-      <ToastContainer/>
+      <ToastContainer />
     </Container>
   );
 }

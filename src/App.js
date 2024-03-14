@@ -67,7 +67,7 @@ function App() {
             <>
             <Sidebar role={role} />
               <div className="Header absolute top-10 right-0 flex items-center p-4 mr-20 text-white">
-              <img src={logoImage} alt="Logo" style={{ height: '80px', width: 'auto', marginRight: '1200px' }} />
+              <img src={logoImage} alt="Logo" style={{ height: '80px', width: 'auto', marginRight: '1100px' }} />
 
                 <div className="mr-4">
                   <p className="text-lg font-bold text-blue-300">Hello, {role}!</p> 

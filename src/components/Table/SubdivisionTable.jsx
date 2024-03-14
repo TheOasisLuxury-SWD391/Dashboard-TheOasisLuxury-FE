@@ -31,6 +31,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 export default function SubdivisionTable() {
   const makeStyle = (status) => {
     if (status === 'ACTIVE') {
@@ -55,14 +56,35 @@ export default function SubdivisionTable() {
     updateDate: '',
     quantityVilla: '',
     status: '',
-    url_image: [], 
+    url_image: [],
   });
   const [editSubdivision, setEditSubdivision] = useState(null); // State cho dự án đang chỉnh sửa
   const [openEditDialog, setOpenEditDialog] = useState(false); // State để mở và đóng dialog chỉnh sửa
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); 
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [role, setRole] = useState("");
+  const userId = localStorage.getItem("user_id");
+  const accessToken = localStorage.getItem("token");
+  console.log('role', role);
+
+
+  useEffect(() => {
+    if (userId && accessToken) {
+      axios.get(`http://localhost:5000/api/v1/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }).then((res) => {
+        console.log("role", role);
+        const userRole = res.data.user.role_name;
+        setRole(userRole);
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
+  }, [userId, accessToken]);
 
   useEffect(() => {
     fetchSubdivisions();
@@ -197,7 +219,7 @@ export default function SubdivisionTable() {
 
       if (response.ok) {
         const addedSubdivision = await response.json();
-        setSubdivisions([...subdivisions, addedSubdivision]); 
+        setSubdivisions([...subdivisions, addedSubdivision]);
         addedSubdivision.url_image = newSubdivision.url_image;
         setSubdivisions([...subdivisions, addedSubdivision]);
         console.log("Subdivision added successfully");
@@ -297,11 +319,11 @@ export default function SubdivisionTable() {
               </InputAdornment>
             ),
             style: {
-              backgroundColor: 'white', 
-              borderRadius: '4px', 
+              backgroundColor: 'white',
+              borderRadius: '4px',
             },
           }}
-          sx={{ width: '100%' }} 
+          sx={{ width: '100%' }}
         />
         <Tooltip title="Add New Subdivision">
           <IconButton color="primary" onClick={handleClickOpen}>
@@ -310,11 +332,13 @@ export default function SubdivisionTable() {
         </Tooltip>
 
       </Box>
+      {role === 'ADMIN' && (
       <CreateSubdivisionDialog
         open={openDialog}
         handleClose={() => setOpenDialog(false)}
         handleSubdivisionAdd={handleAdd}
       />
+        )}
       <EditSubdivisionDialog
         editSubdivision={editSubdivision}
         setEditSubdivision={setEditSubdivision}
@@ -322,7 +346,7 @@ export default function SubdivisionTable() {
         handleCloseEditDialog={handleCloseEditDialog}
         handleUpdate={handleUpdate}
       />
-        <Dialog
+      <Dialog
         open={confirmDelete}
         onClose={handleCloseConfirmDelete}
         aria-labelledby="alert-dialog-title"
@@ -370,9 +394,9 @@ export default function SubdivisionTable() {
                   const project = projects.find(p => p._id === subdivision.project_id);
                   return (
                     <TableRow key={subdivision._id}>
-                       <TableCell>{startNumber + index}</TableCell>
+                      <TableCell>{startNumber + index}</TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.subdivision_name || 'N/A'}</TableCell>
-                      <TableCell align="left"><img src={subdivision.url_image}/></TableCell>
+                      <TableCell align="left"><img src={subdivision.url_image} /></TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }} >{subdivision.location || 'N/A'}</TableCell>
                       <TableCell align="left" >
                         {subdivision.insert_date
@@ -401,7 +425,9 @@ export default function SubdivisionTable() {
                       <TableCell align="center">
                         <div className="flex">
                           <IconButton onClick={() => handleOpenEditDialog(subdivision)}><EditIcon /></IconButton>
-                          <IconButton onClick={() => handleDeleteClick(subdivision._id)}><DeleteIcon /></IconButton>
+                          {role === 'ADMIN' && (
+                            <IconButton onClick={() => handleDeleteClick(subdivision._id)}><DeleteIcon /></IconButton>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>

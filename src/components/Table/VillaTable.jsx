@@ -20,7 +20,7 @@ import {
     Box,
     Typography,
     TextField,
-    
+
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -32,6 +32,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import CreateTimeShareDialog from '../Popup/CreateTimeShare';
+import axios from 'axios';
 export default function VillaTable() {
     const makeStyle = (status) => {
         if (status === 'ACTIVE') {
@@ -69,7 +70,29 @@ export default function VillaTable() {
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [accountIdToDelete, setAccountIdToDelete] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5); 
+    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [role, setRole] = useState("");
+    const userId = localStorage.getItem("user_id");
+    const accessToken = localStorage.getItem("token");
+    console.log('role', role);
+
+
+    useEffect(() => {
+        if (userId && accessToken) {
+            axios.get(`http://localhost:5000/api/v1/users/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            }).then((res) => {
+                console.log("role", role);
+                const userRole = res.data.user.role_name;
+                setRole(userRole);
+            }).catch((err) => {
+                console.error(err);
+            });
+        }
+    }, [userId, accessToken]);
+
     useEffect(() => {
         fetchVillas();
     }, []);
@@ -270,7 +293,7 @@ export default function VillaTable() {
 
             if (response.ok) {
                 console.log("TimeShare updated successfully");
-                fetchVillas(); 
+                fetchVillas();
                 toast.success("TimeShare updated successfully");
             } else {
                 console.error("Failed to update TimeShare");
@@ -311,15 +334,15 @@ export default function VillaTable() {
     const handleOpenConfirmDelete = (accountId) => {
         setAccountIdToDelete(accountId);
         setConfirmDelete(true);
-      };
-    
-      const handleCloseConfirmDelete = () => {
+    };
+
+    const handleCloseConfirmDelete = () => {
         setConfirmDelete(false);
-      };
-    
-      const handleDeleteClick = (accountId) => {
+    };
+
+    const handleDeleteClick = (accountId) => {
         handleOpenConfirmDelete(accountId);
-      };
+    };
 
 
     // const handleSearchChange = (event) => {
@@ -361,24 +384,24 @@ export default function VillaTable() {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredVillas.slice(indexOfFirstItem, indexOfLastItem);
-  
+
     const handleNextPage = () => {
-      if (currentPage < totalPages) {
-        setCurrentPage(currentPage + 1);
-      }
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
     };
-  
+
     const handlePrevPage = () => {
-      if (currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
     };
-  
+
     const goToPage = (page) => {
-      setCurrentPage(page);
+        setCurrentPage(page);
     };
-  
-    const startNumber = (currentPage - 1) * itemsPerPage + 1; 
+
+    const startNumber = (currentPage - 1) * itemsPerPage + 1;
     return (
 
         <Container maxWidth="md" sx={{}}>
@@ -410,11 +433,13 @@ export default function VillaTable() {
                 </Tooltip>
 
             </Box>
+            {role === 'ADMIN' && (
             <CreateVillaDialog
                 open={openDialog}
                 handleClose={() => setOpenDialog(false)}
                 handleVillaAdd={handleAdd}
             />
+            )}
             <EditVillaDialog
                 editVilla={editVilla}
                 setEditVilla={setEditVilla}
@@ -422,30 +447,30 @@ export default function VillaTable() {
                 handleCloseEditDialog={handleCloseEditDialog}
                 handleUpdate={handleUpdate}
             />
-              <Dialog
-        open={confirmDelete}
-        onClose={handleCloseConfirmDelete}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Bạn có chắc muốn xóa không?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseConfirmDelete} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={() => {
-            handleDelete(accountIdToDelete);
-            handleCloseConfirmDelete();
-          }} color="primary" autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <Dialog
+                open={confirmDelete}
+                onClose={handleCloseConfirmDelete}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Bạn có chắc muốn xóa không?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseConfirmDelete} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={() => {
+                        handleDelete(accountIdToDelete);
+                        handleCloseConfirmDelete();
+                    }} color="primary" autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <div style={{ padding: '8px', width: '100%' }}>
                 <Paper sx={{ width: '130%', overflow: 'hidden' }}>
                     <TableContainer sx={{ maxHeight: 550 }}>
@@ -474,7 +499,7 @@ export default function VillaTable() {
                                     // console.log('villa?.timeShareDetails?.result?.start_date',villa?.timeShareDetails?.result?.start_date);
                                     return (
                                         <TableRow key={villa._id}>
-                                           <TableCell>{startNumber + index}</TableCell>
+                                            <TableCell>{startNumber + index}</TableCell>
                                             <TableCell align="left">
                                                 {Array.isArray(villa.url_image) && villa.url_image.map((url, index) => (
                                                     <div key={index}>
@@ -482,7 +507,7 @@ export default function VillaTable() {
                                                             width: '100%', // Ensure the image takes full width
                                                             height: 'auto', // Maintain aspect ratio
                                                             objectFit: 'cover',
-                                                            margin:'10px'
+                                                            margin: '10px'
                                                         }} />
                                                     </div>
                                                 ))}
@@ -494,7 +519,7 @@ export default function VillaTable() {
                                                     textOverflow: 'ellipsis',
                                                     whiteSpace: 'nowrap'
                                                 }}
-                                                align="left" 
+                                                align="left"
                                                 title={villa.villa_name}>
                                                 {villa.villa_name || 'N/A'}
                                             </TableCell>
@@ -558,11 +583,13 @@ export default function VillaTable() {
                                                     })
                                                     : 'N/A'}
                                             </TableCell>
-                                            
+
                                             <TableCell align="center">
                                                 <div className="flex">
                                                     <IconButton onClick={() => handleOpenEditDialog(villa)}><EditIcon /></IconButton>
-                                                    <IconButton onClick={() => handleDeleteClick(villa._id)}><DeleteIcon /></IconButton>
+                                                    {role === 'ADMIN' && (
+                                                        <IconButton onClick={() => handleDeleteClick(villa._id)}><DeleteIcon /></IconButton>
+                                                    )}
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -574,12 +601,12 @@ export default function VillaTable() {
                 </Paper>
             </div>
             <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
-        {Array.from({ length: totalPages }).map((_, index) => (
-          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
-        ))}
-        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
-      </div>
+                <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+                {Array.from({ length: totalPages }).map((_, index) => (
+                    <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+                ))}
+                <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
+            </div>
             <ToastContainer />
         </Container>
     );

@@ -28,12 +28,36 @@ import 'react-toastify/dist/ReactToastify.css';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import DetailsIcon from '@mui/icons-material/Details';
+import axios from 'axios';
 export default function ContractTable() {
 
   const [contracts, setContracts] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const navigate = useNavigate();
+  const [role, setRole] = useState("");
+  const userId = localStorage.getItem("user_id");
+  const accessToken = localStorage.getItem("token");
+  console.log('role', role);
+
+
+  useEffect(() => {
+    if (userId && accessToken) {
+      axios.get(`http://localhost:5000/api/v1/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }).then((res) => {
+        console.log("role", role);
+        const userRole = res.data.user.role_name;
+        setRole(userRole);
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
+  }, [userId, accessToken]);
+
+
   useEffect(() => {
     fetchContracts();
   }, []);
@@ -71,6 +95,11 @@ export default function ContractTable() {
         color: 'red',
       };
 
+    } else if (status === 'PENDING') {
+      return {
+        background: 'yellow',
+        color: 'black',
+      };
 
     }
   };
@@ -139,29 +168,29 @@ export default function ContractTable() {
     }
   };
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); 
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
-const totalPages = Math.ceil(filteredContracts.length / itemsPerPage);
-const indexOfLastItem = currentPage * itemsPerPage;
-const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-const currentItems = filteredContracts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredContracts.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredContracts.slice(indexOfFirstItem, indexOfLastItem);
 
-const handleNextPage = () => {
-  if (currentPage < totalPages) {
-    setCurrentPage(currentPage + 1);
-  }
-};
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
-const handlePrevPage = () => {
-  if (currentPage > 1) {
-    setCurrentPage(currentPage - 1);
-  }
-};
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
-const goToPage = (page) => {
-  setCurrentPage(page);
-};
-const startNumber = (currentPage - 1) * itemsPerPage + 1;
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+  const startNumber = (currentPage - 1) * itemsPerPage + 1;
   return (
 
     <Container maxWidth="md" sx={{}} className=''>
@@ -231,14 +260,16 @@ const startNumber = (currentPage - 1) * itemsPerPage + 1;
                   <TableCell align="center">Signature</TableCell>
                   <TableCell align="center">Status</TableCell>
                   <TableCell align="center">Details</TableCell>
-                  <TableCell align="center">Actions</TableCell>
+                  {role === 'ADMIN' && (
+                    <TableCell align="center">Actions</TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {Array.isArray(currentItems) && currentItems.map((contract, index) => {
                   return (
                     <TableRow key={contract._id}>
-                       <TableCell>{startNumber + index}</TableCell>
+                      <TableCell>{startNumber + index}</TableCell>
                       <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>{contract.contract_name || 'N/A'}</TableCell>
                       <TableCell align="left">
                         {contract.insert_date
@@ -260,23 +291,25 @@ const startNumber = (currentPage - 1) * itemsPerPage + 1;
                       </TableCell>
                       <TableCell align="left">{contract.deflag || 'false'}</TableCell>
 
-                      <TableCell align="left">{contract.sign_contract || 'false'}</TableCell>
+                      <TableCell align="left">{contract.sign_contract ? 'Đã Ký' : 'Chưa Ký' || 'false'}</TableCell>
                       <TableCell align="center">
                         <span className="status" style={makeStyle(contract.status || '')}>{contract.status || ''}</span>
                       </TableCell>
                       <TableCell align="center">
-                   <div className="flex">
-                   <Button onClick={() => handleDetailsClick(contract._id)}>
-                          Detail
-                        </Button>
-                   
-                      </div>
+                        <div className="flex">
+                          <Button onClick={() => handleDetailsClick(contract._id)}>
+                            Detail
+                          </Button>
+
+                        </div>
                       </TableCell>
                       <TableCell align="center">
-                      <div className="flex">
-                        <IconButton onClick={() => handleDeleteClick(contract._id)}><DeleteIcon /></IconButton>
-                      </div>
-                    </TableCell>
+                        <div className="flex">
+                          {role === 'ADMIN' && (
+                            <IconButton onClick={() => handleDeleteClick(contract._id)}><DeleteIcon /></IconButton>
+                          )}
+                        </div>
+                      </TableCell>
                     </TableRow>
                   );
                 })}

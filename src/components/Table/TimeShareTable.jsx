@@ -30,6 +30,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
+import axios from 'axios';
 export default function TimeShareTable() {
     const makeStyle = (status) => {
         if (status === 'ACTIVE') {
@@ -57,7 +58,28 @@ export default function TimeShareTable() {
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [accountIdToDelete, setAccountIdToDelete] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5); 
+    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [role, setRole] = useState("");
+    const userId = localStorage.getItem("user_id");
+    const accessToken = localStorage.getItem("token");
+    console.log('role', role);
+
+
+    useEffect(() => {
+        if (userId && accessToken) {
+            axios.get(`http://localhost:5000/api/v1/users/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            }).then((res) => {
+                console.log("role", role);
+                const userRole = res.data.user.role_name;
+                setRole(userRole);
+            }).catch((err) => {
+                console.error(err);
+            });
+        }
+    }, [userId, accessToken]);
     useEffect(() => {
         fetchTimeShares();
     }, []);
@@ -220,21 +242,21 @@ export default function TimeShareTable() {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredTimeShares.slice(indexOfFirstItem, indexOfLastItem);
-  
+
     const handleNextPage = () => {
-      if (currentPage < totalPages) {
-        setCurrentPage(currentPage + 1);
-      }
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
     };
-  
+
     const handlePrevPage = () => {
-      if (currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
     };
-  
+
     const goToPage = (page) => {
-      setCurrentPage(page);
+        setCurrentPage(page);
     };
     const startNumber = (currentPage - 1) * itemsPerPage + 1;
     return (
@@ -267,11 +289,13 @@ export default function TimeShareTable() {
                 </Tooltip>
 
             </Box>
+            {role === 'ADMIN' && (
             <CreateTimeShareDialog
                 open={openDialog}
                 handleClose={() => setOpenDialog(false)}
                 handleTimeShareAdd={handleAdd}
             />
+            )}
             <EditTimeShareDialog
                 editTimeShare={editTimeShare}
                 setEditTimeShare={setEditTimeShare}
@@ -315,23 +339,24 @@ export default function TimeShareTable() {
                                     <TableCell>EndDate</TableCell>
                                     <TableCell>Deflag</TableCell>
                                     <TableCell align="center">Type</TableCell>
-
-                                    <TableCell align="left">Actions</TableCell>
+                                    {role === 'ADMIN' && (
+                                        <TableCell align="left">Actions</TableCell>
+                                    )}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {currentItems.map((timeshare, index) => (
                                     <TableRow key={timeshare._id}>
-                                         <TableCell>{startNumber + index}</TableCell>
-                                        <TableCell 
-                                            align="left"  
+                                        <TableCell>{startNumber + index}</TableCell>
+                                        <TableCell
+                                            align="left"
                                             style={{
-                                                    maxWidth: 150,
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap'
-                                                }}
-                                            title={timeshare.time_share_name} 
+                                                maxWidth: 150,
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                            title={timeshare.time_share_name}
                                         >
                                             {timeshare.time_share_name || 'N/A'}
                                         </TableCell>
@@ -359,13 +384,14 @@ export default function TimeShareTable() {
                                             <span className="deflag" style={makeStyle(timeshare.deflag || 'FALSE')}>{timeshare.deflag || 'FALSE'}</span>
                                         </TableCell>
                                         <TableCell align="center">{timeshare.time_share_type || '0'}</TableCell>
-
-                                        <TableCell align="center">
-                                            <div className="flex">
-                                                <IconButton onClick={() => handleOpenEditDialog(timeshare)}><EditIcon /></IconButton>
-                                                <IconButton onClick={() => handleDeleteClick(timeshare._id)}><DeleteIcon /></IconButton>
-                                            </div>
-                                        </TableCell>
+                                        {role === 'ADMIN' && (
+                                            <TableCell align="center">
+                                                <div className="flex">
+                                                    <IconButton onClick={() => handleOpenEditDialog(timeshare)}><EditIcon /></IconButton>
+                                                    <IconButton onClick={() => handleDeleteClick(timeshare._id)}><DeleteIcon /></IconButton>
+                                                </div>
+                                            </TableCell>
+                                        )}
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -374,12 +400,12 @@ export default function TimeShareTable() {
                 </Paper>
             </div>
             <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
-        {Array.from({ length: totalPages }).map((_, index) => (
-          <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
-        ))}
-        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
-      </div>
+                <Button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</Button>
+                {Array.from({ length: totalPages }).map((_, index) => (
+                    <Button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</Button>
+                ))}
+                <Button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</Button>
+            </div>
             <ToastContainer />
         </Container>
     );
