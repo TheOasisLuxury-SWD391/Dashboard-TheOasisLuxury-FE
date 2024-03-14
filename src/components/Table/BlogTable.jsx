@@ -59,10 +59,8 @@ export default function BlogTable() {
           const userRole = res.data.user.role_name;
           setRole(userRole);
           console.log('Login successful');
-          toast.success("Login successful");
         }).catch((err) => {
           console.error(err);
-          toast.error("Login failed");
         });
       }
     }, [userId, accessToken]); 

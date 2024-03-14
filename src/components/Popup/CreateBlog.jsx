@@ -29,8 +29,8 @@ const CreateBlogDialog = ({ open, handleClose, setBlogs, blogs }) => {
             if (response.ok) {
                 const addedBlog = await response.json();
                 setBlogs([...blogs, addedBlog]); // Update the state
-                console.log("Blog added successfully");
                 toast.success("Blog added successfully");
+                console.log("Blog added successfully");
             } else {
                 const errorData = await response.json();
                 console.error("Failed to add Blog", errorData);
@@ -38,7 +38,7 @@ const CreateBlogDialog = ({ open, handleClose, setBlogs, blogs }) => {
             }
         } catch (error) {
             console.error("Error adding Blog:", error);
-            toast.error("Blog added successfully");
+            toast.error("Failed to add Blog");
         }
         handleClose();
     };

@@ -28,6 +28,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
+import axios from 'axios';
 
 export default function OrderTable() {
   const makeStyle = (status) => {
@@ -69,6 +70,28 @@ export default function OrderTable() {
   const [openEditDialog, setOpenEditDialog] = useState(false); // Define openEditDialog state here
   const startNumber = (currentPage - 1) * itemsPerPage + 1;
   const navigate = useNavigate();
+  const [role, setRole] = useState("");
+  const userId = localStorage.getItem("user_id");
+  const accessToken = localStorage.getItem("token");
+  console.log('role', role);
+
+
+  useEffect(() => {
+    if (userId && accessToken) {
+      axios.get(`http://localhost:5000/api/v1/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }).then((res) => {
+        console.log("role", role);
+        const userRole = res.data.user.role_name;
+        setRole(userRole);
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
+  }, [userId, accessToken]);
+
 
   useEffect(() => {
     fetchOrders();
@@ -247,13 +270,15 @@ export default function OrderTable() {
                   <TableCell align="center">Status</TableCell>
                   <TableCell>Description</TableCell>
                   <TableCell>Detail</TableCell>
+                  {role === 'ADMIN' && (
                   <TableCell>Action</TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {Array.isArray(currentItems) && currentItems.map((order, index) => (
                   <TableRow key={order._id}>
-                     <TableCell>{startNumber + index}</TableCell>
+                    <TableCell>{startNumber + index}</TableCell>
                     <TableCell
                       style={{
                         maxWidth: 150,
@@ -293,11 +318,13 @@ export default function OrderTable() {
                         Detail
                       </Button>
                     </TableCell>
-                    <TableCell align="center">
-                      <div className="flex">
-                        <IconButton onClick={() => handleDeleteClick(order._id)}><DeleteIcon /></IconButton>
-                      </div>
-                    </TableCell>
+                    {role === 'ADMIN' && (
+                      <TableCell align="center">
+                        <div className="flex">
+                          <IconButton onClick={() => handleDeleteClick(order._id)}><DeleteIcon /></IconButton>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
