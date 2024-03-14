@@ -24,28 +24,16 @@ import {
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CreateTimeShareDialog from '../Popup/CreateTimeShare';
-import EditTimeShareDialog from '../Popup/EditTimeShare';
+import CreateTimeShareDialog from '../../Popup/CreateTimeShare';
+import EditTimeShareDialog from '../../Popup/EditTimeShare';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
+import TimeShareRow from './TimeshareTree'
 export default function TimeShareTable() {
-    const makeStyle = (status) => {
-        if (status === 'ACTIVE') {
-            return {
-                background: 'rgb(145 254 159 / 47%)',
-                color: 'green',
-            }
-        }
-        else if (status === 'INACTIVE') {
-            return {
-                background: '#ffadad8f',
-                color: 'red',
-            }
-        }
-    }
+   
     const [timeshares, setTimeShares] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [newTimeShare, setNewTimeShare] = useState({
@@ -238,6 +226,7 @@ export default function TimeShareTable() {
     const handleDeleteClick = (accountId) => {
         handleOpenConfirmDelete(accountId);
     };
+
     const totalPages = Math.ceil(filteredTimeShares.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -290,11 +279,11 @@ export default function TimeShareTable() {
 
             </Box>
             {role === 'ADMIN' && (
-            <CreateTimeShareDialog
-                open={openDialog}
-                handleClose={() => setOpenDialog(false)}
-                handleTimeShareAdd={handleAdd}
-            />
+                <CreateTimeShareDialog
+                    open={openDialog}
+                    handleClose={() => setOpenDialog(false)}
+                    handleTimeShareAdd={handleAdd}
+                />
             )}
             <EditTimeShareDialog
                 editTimeShare={editTimeShare}
@@ -346,55 +335,10 @@ export default function TimeShareTable() {
                             </TableHead>
                             <TableBody>
                                 {currentItems.map((timeshare, index) => (
-                                    <TableRow key={timeshare._id}>
-                                        <TableCell>{startNumber + index}</TableCell>
-                                        <TableCell
-                                            align="left"
-                                            style={{
-                                                maxWidth: 150,
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                            title={timeshare.time_share_name}
-                                        >
-                                            {timeshare.time_share_name || 'N/A'}
-                                        </TableCell>
-
-                                        <TableCell align="left" >
-                                            {timeshare.start_date
-                                                ? new Date(timeshare.start_date).toLocaleString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                })
-                                                : 'N/A'}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            {timeshare.end_date
-                                                ? new Date(timeshare.end_date).toLocaleString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                })
-                                                : 'N/A'}
-                                        </TableCell>
-
-                                        <TableCell align="left">
-                                            <span className="deflag" style={makeStyle(timeshare.deflag || 'FALSE')}>{timeshare.deflag || 'FALSE'}</span>
-                                        </TableCell>
-                                        <TableCell align="center">{timeshare.time_share_type || '0'}</TableCell>
-                                        {role === 'ADMIN' && (
-                                            <TableCell align="center">
-                                                <div className="flex">
-                                                    <IconButton onClick={() => handleOpenEditDialog(timeshare)}><EditIcon /></IconButton>
-                                                    <IconButton onClick={() => handleDeleteClick(timeshare._id)}><DeleteIcon /></IconButton>
-                                                </div>
-                                            </TableCell>
-                                        )}
-                                    </TableRow>
+                                    <TimeShareRow timeshare={timeshare} key={timeshare._id} index={index + 1} level={0}/>
                                 ))}
                             </TableBody>
+
                         </Table>
                     </TableContainer>
                 </Paper>

@@ -5,7 +5,13 @@ import {
   Box,
   Typography,
   Grid,
-  Button
+  Button,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Dialog,
+  TextField,
+  DialogActions
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -20,6 +26,10 @@ const DetailsPage = () => {
   const userId = localStorage.getItem("user_id");
   const accessToken = localStorage.getItem("token");
   console.log('role', role);
+
+  // Add new states
+  const [openModal, setOpenModal] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
 
 
   useEffect(() => {
@@ -90,6 +100,7 @@ const DetailsPage = () => {
   }, [contractDetails]);
 
   const handleConfirm = async () => {
+    setOpenModal(true);
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:5000/api/v1/users/confirm-contract/${contractId}`, {
@@ -113,6 +124,39 @@ const DetailsPage = () => {
       console.error('Error confirming contract:', error);
       toast.error('Error confirming contract');
     }
+  };
+
+  const handleSendAndApprove = async () => {
+    // Close modal first
+    setOpenModal(false);
+
+    // Send Email Notification
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`http://localhost:5000/api/v1/users/contract/send-email/${contractId}`, { text: notificationMessage }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      // If email sent successfully, then approve the contract
+      const response = await axios.patch(`http://localhost:5000/api/v1/users/confirm-contract/${contractId}`, { status: 'APPROVED' }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        toast.success('Contract approved and notification sent successfully.');
+        navigate('/contracts');
+      }
+    } catch (error) {
+      console.error('Error sending notification or approving contract:', error);
+      toast.error('Error sending notification or approving contract');
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   const handleAutoReject = async () => {
@@ -188,55 +232,78 @@ const DetailsPage = () => {
 
   return (
     <div className='mt-36 overflow-y-auto	'>
-    <div className='flex justify-between'>
-      <h2 className="text-xl font-bold ml-48 mb-10">THÔNG TIN CHI TIẾT HỢP ĐỒNG</h2>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-4 rounded float-right mr-10 h-10"
-        onClick={handleBackClick}
-      >
-        Back
-      </button>
-    </div>
+      <div className='flex justify-between'>
+        <h2 className="text-xl font-bold ml-48 mb-10">THÔNG TIN CHI TIẾT HỢP ĐỒNG</h2>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-4 rounded float-right mr-10 h-10"
+          onClick={handleBackClick}
+        >
+          Back
+        </button>
+      </div>
 
-    <Box className=' ml-40'>
-      <Paper elevation={3} style={{ padding: '8px' }}>
-        <Typography variant="h4" gutterBottom>
-          Contract Details
-        </Typography>
-        <div> Thời hạn ký hợp đồng này sau:  {countdown && <p>Time left: {countdown}</p>}</div>
-        {contractDetails ? (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Contract Name: {contractDetails.contract_name}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              Insert Date: {new Date(contractDetails.insert_date).toLocaleString()}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              Sign Contract: {contractDetails.sign_contract ? 'Đã Ký' : 'Chưa Ký'}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              Update Date: {new Date(contractDetails.update_date).toLocaleString()}
-            </Typography>
-            <img src={contractDetails.url_image} />
-            {role === 'ADMIN' && (
+      <Box className=' ml-40'>
+        <Paper elevation={3} style={{ padding: '8px' }}>
+          <Typography variant="h4" gutterBottom>
+            Contract Details
+          </Typography>
+          <div> Thời hạn ký hợp đồng này sau:  {countdown && <p>Time left: {countdown}</p>}</div>
+          {contractDetails ? (
+            <div>
+              <Typography variant="h6" gutterBottom>
+                Contract Name: {contractDetails.contract_name}
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                Insert Date: {new Date(contractDetails.insert_date).toLocaleString()}
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                Sign Contract: {contractDetails.sign_contract ? 'Đã Ký' : 'Chưa Ký'}
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                Update Date: {new Date(contractDetails.update_date).toLocaleString()}
+              </Typography>
+              <img src={contractDetails.url_image} />
+              {/* {role === 'ADMIN' && ( */}
               <Box mt={8}>
                 <Grid container spacing={8}>
                   <Grid item>
                     <Button variant="contained" color="primary" onClick={handleConfirm}>APPROVED</Button>
+                    <Dialog open={openModal} onClose={handleCloseModal}>
+                      <DialogTitle>Send Notification</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText>
+                          Please enter the notification message you want to send to the user.
+                        </DialogContentText>
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="message"
+                          label="Notification Message"
+                          type="text"
+                          fullWidth
+                          variant="standard"
+                          value={notificationMessage}
+                          onChange={(e) => setNotificationMessage(e.target.value)}
+                        />
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleCloseModal}>Cancel</Button>
+                        <Button onClick={handleSendAndApprove}>Send and Approve Contract</Button>
+                      </DialogActions>
+                    </Dialog>
                   </Grid>
                   <Grid item>
                     <Button variant="contained" color="secondary" onClick={handleReject}>REJECTED</Button>
                   </Grid>
                 </Grid>
               </Box>
-            )}
-          </div>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </Paper>
-    </Box>
+              {/* )} */}
+            </div>
+          ) : (
+            <p>Loading...</p>
+          )}
+        </Paper>
+      </Box>
     </div>
   );
 };
