@@ -98,6 +98,7 @@ function App() {
                   <>
                    <Route path="/" element={<MainDash />} />
                     <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/contracts" element={<ContractPage />} />
                     <Route path="/subdivisions" element={<SubdivisionPage />} />
                     <Route path="/projects" element={<ProjectPage />} />
                     <Route path="/villas" element={<VillaPage />} />

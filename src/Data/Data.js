@@ -23,7 +23,7 @@ export const SidebarData = [
     path: '/orders',
     icon: UilClipboardAlt,
     heading: "Orders",
-    roles: ['ADMIN'],
+    roles: ['ADMIN', 'STAFF'],
   },
   { 
     path: '/accounts',

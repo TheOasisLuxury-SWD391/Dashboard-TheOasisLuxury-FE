@@ -35,6 +35,7 @@ const OrderDetailsPage = ({ value }) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const [orderDetails, setOrderDetails] = useState(null);
+  const [paymentDetails, setPaymentDetails] = useState(null);
   const [countdown, setCountdown] = useState(null);
 
   useEffect(() => {
@@ -61,6 +62,30 @@ const OrderDetailsPage = ({ value }) => {
     fetchOrderDetails();
   }, [orderId]);
 
+  useEffect(() => {
+    console.log('order ID:', orderId);
+    const fetchPaymentDetails = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5000/api/v1/users/getPayments/${orderId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setPaymentDetails(data);
+        } else {
+          console.error('Failed to fetch contract details:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching contract details:', error);
+      }
+    };
+
+    fetchPaymentDetails();
+  }, [orderId]);
+
   const handleConfirm = () => {
     // Xử lý khi người dùng xác nhận
     handleCancelled();
@@ -81,36 +106,27 @@ const OrderDetailsPage = ({ value }) => {
   const handlePaid = async () => {
     try {
       const token = localStorage.getItem('token');
-      const responseOrder = await fetch(`http://localhost:5000/api/v1/orders/${orderId}`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          status: 'COMPLETED',
-          price: orderDetails.price,
-          order_name: orderDetails.order_name
-        })
-      });
+
       // Sửa status Payment
-      const responsePayment = await fetch(`http://localhost:5000/api/v1/orders/${orderId}`, {
-        method: 'PATCH',
+      const responsePayment = await fetch(`http://localhost:5000/api/v1/users/confirm-payment`, {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           status: 'PAID',
+          order_id: orderId,
+          payment_id: paymentDetails._id ,
         })
       });
 
-      if (responseOrder.ok && responsePayment.ok) {
+      if ( responsePayment.ok) {
         console.log('Order marked as PAID successfully.');
         toast.success('Order marked as PAID successfully.');
         navigate('/order');
       } else {
-        console.error('Failed to mark order as PAID:', responseOrder.status, responsePayment.status);
+        console.error('Failed to mark order as PAID:', responsePayment.status);
         toast.error('Failed to mark order as PAID');
       }
     } catch (error) {
@@ -132,7 +148,7 @@ const OrderDetailsPage = ({ value }) => {
         body: JSON.stringify({
           status: 'CANCELLED',
           price: orderDetails.price,
-          order_name: orderDetails.order_name
+          order_name: orderDetails.order_name,
         })
       });
       if (response.ok) {
@@ -155,7 +171,7 @@ const OrderDetailsPage = ({ value }) => {
 
 
   return (
-    <div className='mt-40'>
+    <div className='mt-36 overflow-y-auto	'>
       <div className='flex justify-between'>
         <h2 className="text-xl font-bold ml-48 mb-10">THÔNG TIN CHI TIẾT ĐƠN HÀNG</h2>
         <button
