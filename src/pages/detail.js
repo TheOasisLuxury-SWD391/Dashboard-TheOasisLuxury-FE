@@ -155,6 +155,27 @@ const DetailsPage = () => {
     }
   };
 
+  const handleSendAndApproveStaff = async () => {
+    // Close modal first
+    setOpenModal(false);
+
+    // Send Email Notification
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`http://localhost:5000/api/v1/users/contract/send-email/${contractId}`, { text: notificationMessage }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.status === 200) {
+        toast.success('Sent Mail successfully.');
+        navigate('/contracts');
+      }
+    } catch (error) {
+      console.error('Error sending notification contract:', error);
+      toast.error('Error sending notification contract');
+    }
+  };
+
   const handleCloseModal = () => {
     setOpenModal(false);
   };
@@ -243,12 +264,12 @@ const DetailsPage = () => {
       </div>
 
       <Box className=' ml-40'>
-        <Paper elevation={3} style={{ padding: '8px' }}>
-          <Typography variant="h4" gutterBottom>
-            Contract Details
-          </Typography>
-          <div> Thời hạn ký hợp đồng này sau:  {countdown && <p>Time left: {countdown}</p>}</div>
-          {contractDetails ? (
+        {contractDetails ? (
+          <Paper elevation={3} style={{ padding: '8px' }}>
+            <Typography variant="h5" gutterBottom>
+              MÃ HỢP ĐỒNG:  {contractDetails._id}
+            </Typography>
+            <div> Thời hạn ký hợp đồng này sau:  {countdown && <p>Time left: {countdown}</p>}</div>
             <div>
               <Typography variant="h6" gutterBottom>
                 Contract Name: {contractDetails.contract_name}
@@ -263,46 +284,82 @@ const DetailsPage = () => {
                 Update Date: {new Date(contractDetails.update_date).toLocaleString()}
               </Typography>
               <img src={contractDetails.url_image} />
-              {/* {role === 'ADMIN' && ( */}
-              <Box mt={8}>
-                <Grid container spacing={8}>
-                  <Grid item>
-                    <Button variant="contained" color="primary" onClick={handleConfirm}>APPROVED</Button>
-                    <Dialog open={openModal} onClose={handleCloseModal}>
-                      <DialogTitle>Send Notification</DialogTitle>
-                      <DialogContent>
-                        <DialogContentText>
-                          Please enter the notification message you want to send to the user.
-                        </DialogContentText>
-                        <TextField
-                          autoFocus
-                          margin="dense"
-                          id="message"
-                          label="Notification Message"
-                          type="text"
-                          fullWidth
-                          variant="standard"
-                          value={notificationMessage}
-                          onChange={(e) => setNotificationMessage(e.target.value)}
-                        />
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={handleCloseModal}>Cancel</Button>
-                        <Button onClick={handleSendAndApprove}>Send and Approve Contract</Button>
-                      </DialogActions>
-                    </Dialog>
+              {role === 'ADMIN' && (
+                <Box mt={8}>
+                  <Grid container spacing={8}>
+                    <Grid item>
+                      <Button variant="contained" color="primary" onClick={handleConfirm}>APPROVED</Button>
+                      <Dialog open={openModal} onClose={handleCloseModal}>
+                        <DialogTitle>Send Notification</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            Please enter the notification message you want to send to the user.
+                          </DialogContentText>
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            id="message"
+                            label="Notification Message"
+                            type="text"
+                            fullWidth
+                            variant="standard"
+                            value={notificationMessage}
+                            onChange={(e) => setNotificationMessage(e.target.value)}
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleCloseModal}>Cancel</Button>
+                          <Button onClick={handleSendAndApprove}>Send and Approve Contract</Button>
+                        </DialogActions>
+                      </Dialog>
+                    </Grid>
+                    <Grid item>
+                      <Button variant="contained" color="secondary" onClick={handleReject}>REJECTED</Button>
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <Button variant="contained" color="secondary" onClick={handleReject}>REJECTED</Button>
+                </Box>
+              )}
+              {role === 'STAFF' && (
+                <Box mt={8}>
+                  <Grid container spacing={8}>
+                    <Grid item>
+                      <Button variant="contained" color="primary" onClick={handleConfirm}>SEND MAIL CONFIRM FOR USER</Button>
+                      <Dialog open={openModal} onClose={handleCloseModal}>
+                        <DialogTitle>Send Notification Confirm for User</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            Please enter the notification message you want to send to the user.
+                          </DialogContentText>
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            id="message"
+                            label="Notification Message"
+                            type="text"
+                            fullWidth
+                            variant="standard"
+                            value={notificationMessage}
+                            onChange={(e) => setNotificationMessage(e.target.value)}
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleCloseModal}>Cancel</Button>
+                          <Button onClick={handleSendAndApproveStaff}>Send Mail Confirm</Button>
+                        </DialogActions>
+                      </Dialog>
+                    </Grid>
+                    <Grid item>
+                      <Button variant="contained" color="secondary" onClick={handleReject}>REJECTED</Button>
+                    </Grid>
                   </Grid>
-                </Grid>
-              </Box>
-              {/* )} */}
+                </Box>
+              )}
+
             </div>
-          ) : (
-            <p>Loading...</p>
-          )}
-        </Paper>
+          </Paper>
+        ) : (
+          <p>Loading...</p>
+        )}
       </Box>
     </div>
   );
